@@ -129,7 +129,7 @@ async function save() {
 const norm = e => ({
   id: e.id, name: e.name || '', body_part: e.body_part || '', target: e.target || '',
   equipment: e.equipment || '', secondary: [...new Set(e.secondary_muscles || [])].join(', '),
-  instructions: (e.instructions && e.instructions.en) || '', image: e.image || ''
+  instructions: (e.instructions && e.instructions.en) || '', image: e.image || '', gif: e.gif_url || ''
 });
 function merge() {
   all = base.map(e => state.over[e.id] ? { ...norm(e), ...state.over[e.id], edited: true } : norm(e))
@@ -171,7 +171,7 @@ function openEdit(id) {
   $('#dlgTitle').textContent = id ? 'Edit exercise' : 'Add exercise';
   $('#eName').value = e.name; $('#eBody').value = e.body_part; $('#eTarget').value = e.target;
   $('#eEquip').value = e.equipment; $('#eSec').value = e.secondary; $('#eInstr').value = e.instructions;
-  $('#preview').src = e.image || ''; 
+  $('#preview').src = e.gif || e.image || '';
   const del = $('#delBtn');
   del.hidden = !(e.custom || e.edited);
   del.textContent = e.custom ? 'Delete exercise' : 'Restore original';
@@ -184,7 +184,8 @@ async function saveEdit() {
   const obj = {
     id: editing || 'c' + Date.now(), name, body_part: $('#eBody').value.trim(), target: $('#eTarget').value.trim(),
     equipment: $('#eEquip').value.trim(), secondary: $('#eSec').value.trim(), instructions: $('#eInstr').value.trim(),
-    image: newImage || (cur ? cur.image : '')
+    image: newImage || (cur ? cur.image : ''),
+    gif: newImage ? '' : (cur ? cur.gif || '' : '')
   };
   if (!cur || cur.custom) state.custom[obj.id] = obj; else state.over[obj.id] = obj;
   await save(); merge(); fillLists(); render(); $('#dlg').close();
