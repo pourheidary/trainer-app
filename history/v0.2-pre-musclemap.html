@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise library</title>
+<style>
+:root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
+:root[data-theme="dark"]{--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;width:100%}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 16px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+button.danger{color:var(--danger)}
+button.link{border:0;background:none;color:var(--accent);padding:4px 0;font-weight:600}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+html{overflow-y:scroll}
+.top{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:20px clamp(16px,4vw,40px) 12px}
+.top .tabs{justify-self:center}
+.top .acts{justify-self:end}
+@media (max-width:860px){.top{grid-template-columns:1fr}.top .tabs,.top .acts{justify-self:start}}
+h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
+.acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;padding:0 clamp(16px,4vw,40px) 32px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+#detail{min-height:420px;padding:24px}
+.empty{display:grid;place-items:center;text-align:center;min-height:360px;color:var(--mute)}
+.empty b{color:var(--ink);font-size:1.15rem;display:block;margin-bottom:4px}
+.hero{display:flex;gap:24px;flex-wrap:wrap}
+.hero img{width:min(100%,360px);aspect-ratio:1;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--line)}
+.info{flex:1 1 260px;min-width:0}
+.info h2{margin:0 0 10px;font-size:1.6rem;line-height:1.25;letter-spacing:-.01em;text-transform:capitalize}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{background:var(--soft);border-radius:999px;padding:3px 12px;font-size:.88rem}
+.info h3{margin:16px 0 4px;font-size:.95rem;color:var(--mute);font-weight:600}
+.info p{margin:0;max-width:62ch}
+aside{padding:16px}
+.ahead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ahead b{font-size:1.15rem}
+.filters{display:grid;gap:8px;margin-bottom:12px}
+#list{max-height:68vh;overflow-y:auto;margin:0 -6px;padding:0 6px}
+.item{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;border-radius:10px;padding:6px;margin-bottom:2px}
+.item:hover{background:var(--soft)}
+.item[aria-current="true"]{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.item img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#fff;border:1px solid var(--line);flex:none}
+.item span{min-width:0}
+.item b{display:block;font-weight:500;line-height:1.3;text-transform:capitalize;overflow-wrap:anywhere}
+.item small{color:var(--mute);text-transform:capitalize}
+.mark{font-size:.75rem;color:var(--accent);margin-left:6px}
+.count{color:var(--mute);font-size:.85rem;margin:0 0 6px}
+.welcome{max-width:560px;margin:48px auto;padding:28px;text-align:center}
+.welcome h2{margin:0 0 8px}
+.welcome p{color:var(--mute);margin:0 0 18px}
+.err{color:var(--danger);margin-top:12px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:min(560px,94vw);padding:0}
+dialog::backdrop{background:rgba(10,18,26,.55)}
+.dlg{padding:20px;display:grid;gap:12px}
+.dlg h2{margin:0;font-size:1.25rem}
+.dlg label{display:grid;gap:4px;font-size:.9rem;color:var(--mute)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pic{display:flex;gap:14px;align-items:center}
+.pic img{width:110px;height:110px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:#fff}
+.dlg .acts .left{margin-right:auto}
+footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
+.tabs{display:flex;gap:4px;background:var(--soft);border-radius:10px;padding:4px}
+.tabs button{border:0;background:none;padding:7px 18px;border-radius:7px}
+.tabs button[aria-current="page"]{background:var(--surface);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.det{min-height:420px;padding:24px}
+.sth{margin:0 0 16px;font-size:1.5rem;letter-spacing:-.01em}
+.sform{display:grid;gap:14px;max-width:560px}
+.sform label{display:grid;gap:4px;font-size:.9rem;color:var(--mute)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:480px){.three{grid-template-columns:1fr}}
+.sform .acts .left{margin-right:auto}
+.av{width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-style:normal;font-weight:600;flex:none}
+:root{--pri:#e5484d;--sec:#f2b01e}
+.plwrap{padding:0 clamp(16px,4vw,40px) 32px;display:grid;gap:16px}
+.plhead{padding:16px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:end}
+.plhead label,.plhead .fld{display:grid;gap:4px;font-size:.9rem;color:var(--mute)}
+.plhead select{min-width:220px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{min-width:42px;padding:8px 0}
+.seg button[aria-pressed='true']{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.daytabs{display:flex;gap:6px;flex-wrap:wrap}
+.daytabs button[aria-selected='true']{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.plcols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.plcols{grid-template-columns:1fr}}
+.dtitle{display:grid;gap:4px;font-size:.9rem;color:var(--mute);margin-bottom:8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.row img,.row .ph{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#fff;border:1px solid var(--line);flex:none}
+.rn{flex:1 1 150px;min-width:0;font-weight:500;text-transform:capitalize;overflow-wrap:anywhere}
+.mini{display:grid;gap:2px;font-size:.75rem;color:var(--mute);width:72px}
+.mini input{padding:6px 8px}
+.mv{display:flex;gap:4px}
+.mv button{padding:6px 10px}
+.plfoot{display:flex;align-items:center;gap:14px;margin:16px 0 0}
+.fig{display:flex;gap:10px;justify-content:center;margin:0 0 14px}
+.fig figure{margin:0;flex:1 1 0;max-width:230px;text-align:center;color:var(--mute);font-size:.85rem}
+.fig svg{width:100%;height:auto}
+.fig .base{fill:var(--soft);stroke:var(--line);stroke-width:1}
+.fig .m{fill:none;stroke:var(--mute);stroke-opacity:.4;stroke-width:.8}
+.fig .m[data-l='p']{fill:var(--pri);stroke:none}
+.fig .m[data-l='s']{fill:var(--sec);stroke:none}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.mgrp{margin:0 0 8px;font-size:.95rem}
+.plist{max-height:50vh;overflow-y:auto}
+.clr{position:relative}
+.clr input{padding-right:40px}
+.clr .x{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;padding:6px 10px;color:var(--mute)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Trainer app</h1>
+  <nav class="tabs" aria-label="Pages"><button id="tabEx" aria-current="page">Exercises</button><button id="tabSt">Students</button><button id="tabPl">Plan</button></nav>
+  <div class="acts">
+    <button id="folderBtn">Dataset folder</button>
+    <button id="exportBtn">Export backup</button>
+    <button id="importBtn">Import backup</button>
+    <input id="importFile" type="file" accept="application/json" hidden>
+  </div>
+</div>
+
+<div id="pageEx">
+<div id="welcome" class="panel welcome">
+  <h2>Choose your dataset folder</h2>
+  <p>Select the folder that contains <b>data</b>, <b>images</b> and <b>videos</b>. Your browser may say “upload”, but nothing leaves your computer; the files are only read here.</p>
+  <button id="pickBtn" class="primary">Choose folder</button>
+  <div id="err" class="err" role="alert"></div>
+  <input id="dirInput" type="file" webkitdirectory multiple hidden>
+</div>
+
+<div id="app" class="layout" hidden>
+  <section id="detail" class="panel"></section>
+  <aside class="panel">
+    <div class="ahead"><b>Library</b><button id="addBtn" class="link">+ Custom exercise</button></div>
+    <div class="filters">
+      <input id="q" type="search" placeholder="Search exercises" aria-label="Search exercises">
+      <select id="fEquip" aria-label="Equipment"></select>
+      <select id="fTarget" aria-label="Muscle"></select>
+      <select id="fBody" aria-label="Body part"></select>
+    </div>
+    <p id="count" class="count"></p>
+    <div id="list"></div>
+    <button id="more" class="link" hidden>Show more</button>
+  </aside>
+</div>
+</div>
+
+<div id="pageSt" hidden>
+  <div class="layout">
+    <section id="stDetail" class="panel det"></section>
+    <aside class="panel">
+      <div class="ahead"><b>Students</b><button id="stAdd" class="link">+ New student</button></div>
+      <div class="filters"><input id="stQ" type="search" placeholder="Search students" aria-label="Search students"></div>
+      <p id="stCount" class="count"></p>
+      <div id="stList"></div>
+    </aside>
+  </div>
+</div>
+<div id='pagePl' hidden>
+  <div class='plwrap'>
+    <div class='panel plhead'>
+      <label>Student<select id='plStudent'></select></label>
+      <div class='fld'><span>Training days per week</span><div id='plDays' class='seg' role='group' aria-label='Training days per week'></div></div>
+    </div>
+    <div id='plTabs' class='daytabs' role='tablist' aria-label='Training days'></div>
+    <div class='plcols'>
+      <section id='plDay' class='panel det'></section>
+      <section id='plMap' class='panel det'></section>
+    </div>
+  </div>
+</div>
+<footer>Images © Gym visual (gymvisual.com), non-commercial use only.</footer>
+
+<dialog id='pick'>
+  <div class='dlg'>
+    <h2>Add exercise to day <span id='pickDay'></span></h2>
+    <div class='clr'><input id='pQ' type='text' autocomplete='off' placeholder='Search exercises' aria-label='Search exercises'><button id='pX' type='button' class='x' aria-label='Clear search' hidden>✕</button></div>
+    <div class='three'><select id='pE' aria-label='Equipment'></select><select id='pT' aria-label='Muscle'></select><select id='pB' aria-label='Body part'></select></div>
+    <div id='pList' class='plist'></div>
+    <p id='pMsg' class='count' role='status'></p>
+    <div class='acts'><button id='pClose' class='primary'>Done</button></div>
+  </div>
+</dialog>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <h2 id="dlgTitle">Edit exercise</h2>
+    <div class="pic"><img id="preview" alt=""><label>Replace image<input id="fImg" type="file" accept="image/*"></label></div>
+    <label>Name<input id="eName"></label>
+    <div class="two">
+      <label>Target muscle<input id="eTarget" list="targetList"></label>
+      <label>Body part<input id="eBody" list="bodyList"></label>
+    </div>
+    <div class="two">
+      <label>Equipment<input id="eEquip" list="equipList"></label>
+      <label>Secondary muscles (comma separated)<input id="eSec"></label>
+    </div>
+    <label>Instructions<textarea id="eInstr" rows="5"></textarea></label>
+    <datalist id="bodyList"></datalist><datalist id="targetList"></datalist><datalist id="equipList"></datalist>
+    <div class="acts">
+      <button id="delBtn" class="danger left" hidden></button>
+      <button id="cancelBtn">Cancel</button>
+      <button id="saveBtn" class="primary">Save changes</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let files = {}, urls = {}, base = [], all = [], shown = 120, selected = null, editing = null, newImage = null;
+let state = { over: {}, custom: {}, students: {}, plans: {} };
+
+/* ---------- saved edits (browser storage; may be empty) ---------- */
+const open = () => new Promise((res, rej) => {
+  const r = indexedDB.open('trainer-app', 1);
+  r.onupgradeneeded = () => r.result.createObjectStore('kv');
+  r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+});
+async function load() {
+  try { const db = await open();
+    return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get('state'); q.onsuccess = () => res(q.result); q.onerror = () => res(null); });
+  } catch (e) { return null; }
+}
+async function save() {
+  try { const db = await open();
+    await new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(state, 'state'); t.oncomplete = res; t.onerror = () => rej(t.error); });
+  } catch (e) { alert('Could not save in this browser. Use Export backup to keep your changes.'); }
+}
+
+/* ---------- dataset folder ---------- */
+function fileUrl(path) {
+  if (!path) return '';
+  if (path.startsWith('data:')) return path;
+  if (urls[path]) return urls[path];
+  const f = files[path]; if (!f) return '';
+  return (urls[path] = URL.createObjectURL(f));
+}
+async function readFolder(list) {
+  files = {}; urls = {};
+  for (const f of list) { const p = f.webkitRelativePath.split('/').slice(1).join('/'); files[p] = f; }
+  const j = files['data/exercises.json'];
+  if (!j) { $('#err').textContent = 'data/exercises.json was not found. Select the folder that contains the data, images and videos folders.'; return; }
+  try { base = JSON.parse(await j.text()); } catch (e) { $('#err').textContent = 'data/exercises.json could not be read.'; return; }
+  $('#err').textContent = '';
+  
+  merge(); fillLists(); selected = null;
+  $('#welcome').hidden = true; $('#app').hidden = false; $('#folderBtn').hidden = false;
+  render(); renderDetail();
+}
+
+/* ---------- data ---------- */
+const norm = e => ({ id: e.id, name: e.name || '', body_part: e.body_part || '', target: e.target || '', equipment: e.equipment || '',
+  secondary: [...new Set(e.secondary_muscles || [])].join(', '), instructions: (e.instructions && e.instructions.en) || '',
+  image: e.image || '', gif: e.gif_url || '' });
+function merge() {
+  all = base.map(e => state.over[e.id] ? { ...norm(e), ...state.over[e.id], edited: true } : norm(e))
+    .concat(Object.values(state.custom).map(e => ({ ...e, custom: true })));
+  all.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/* ---------- list ---------- */
+function fillSelect(sel, key, label) {
+  const cur = sel.value, vals = [...new Set(all.map(e => e[key]).filter(Boolean))].sort();
+  sel.innerHTML = `<option value="">${label}</option>` + vals.map(v => `<option>${esc(v)}</option>`).join('');
+  sel.value = vals.includes(cur) ? cur : '';
+}
+function fillLists() {
+  fillSelect($('#fEquip'), 'equipment', 'All equipment');
+  fillSelect($('#fTarget'), 'target', 'All muscles');
+  fillSelect($('#fBody'), 'body_part', 'All body parts');
+  for (const [id, key] of [['bodyList','body_part'],['targetList','target'],['equipList','equipment']])
+    $('#' + id).innerHTML = [...new Set(all.map(e => e[key]).filter(Boolean))].sort().map(v => `<option value="${esc(v)}">`).join('');
+}
+function render() {
+  const q = $('#q').value.trim().toLowerCase(), b = $('#fBody').value, t = $('#fTarget').value, eq = $('#fEquip').value;
+  const list = all.filter(e => (!q || e.name.toLowerCase().includes(q)) && (!b || e.body_part === b) && (!t || e.target === t) && (!eq || e.equipment === eq));
+  $('#count').textContent = `${list.length} of ${all.length} exercises`;
+  $('#list').innerHTML = list.slice(0, shown).map(e => `
+    <button class="item" data-id="${esc(e.id)}" ${e.id === selected ? 'aria-current="true"' : ''}>
+      <img src="${esc(fileUrl(e.image))}" alt="" loading="lazy">
+      <span><b>${esc(e.name)}${e.edited || e.custom ? '<i class="mark">edited</i>' : ''}</b><small>${esc(e.target)}</small></span>
+    </button>`).join('') || '<p class="count">No exercises match your filters.</p>';
+  $('#more').hidden = list.length <= shown;
+}
+function renderDetail() {
+  const e = all.find(x => x.id === selected), box = $('#detail');
+  if (!e) { box.innerHTML = '<div class="empty"><div><b>Select an exercise</b>Click an exercise in the library to see it here.</div></div>'; return; }
+  const chips = [e.target, e.body_part, e.equipment].filter(Boolean).map(c => `<span class="chip">${esc(c)}</span>`).join('');
+  box.innerHTML = `<div class="hero"><img src="${esc(fileUrl(e.gif || e.image))}" alt="${esc(e.name)}">
+    <div class="info"><h2>${esc(e.name)}</h2><div class="chips">${chips}</div>
+    ${e.secondary ? `<h3>Secondary muscles</h3><p>${esc(e.secondary)}</p>` : ''}
+    ${e.instructions ? `<h3>Instructions</h3><p>${esc(e.instructions)}</p>` : ''}
+    <p style="margin-top:18px"><button id="editBtn" class="primary">Edit exercise</button></p></div></div>`;
+  $('#editBtn').onclick = () => openEdit(e.id);
+}
+
+/* ---------- edit dialog ---------- */
+function openEdit(id) {
+  editing = id; newImage = null; $('#fImg').value = '';
+  const e = id ? all.find(x => x.id === id) : { name: '', body_part: '', target: '', equipment: '', secondary: '', instructions: '', image: '' };
+  $('#dlgTitle').textContent = id ? 'Edit exercise' : 'Add custom exercise';
+  $('#eName').value = e.name; $('#eBody').value = e.body_part; $('#eTarget').value = e.target;
+  $('#eEquip').value = e.equipment; $('#eSec').value = e.secondary; $('#eInstr').value = e.instructions;
+  $('#preview').src = fileUrl(e.gif || e.image);
+  const del = $('#delBtn'); del.hidden = !(e.custom || e.edited); del.textContent = e.custom ? 'Delete exercise' : 'Restore original';
+  $('#dlg').showModal();
+}
+async function saveEdit() {
+  const name = $('#eName').value.trim(); if (!name) { $('#eName').focus(); return; }
+  const cur = editing ? all.find(x => x.id === editing) : null;
+  const obj = { id: editing || 'c' + Date.now(), name, body_part: $('#eBody').value.trim(), target: $('#eTarget').value.trim(),
+    equipment: $('#eEquip').value.trim(), secondary: $('#eSec').value.trim(), instructions: $('#eInstr').value.trim(),
+    image: newImage || (cur ? cur.image : ''), gif: newImage ? '' : (cur ? cur.gif || '' : '') };
+  if (!cur || cur.custom) state.custom[obj.id] = obj; else state.over[obj.id] = obj;
+  selected = obj.id; await save(); merge(); fillLists(); render(); renderDetail(); $('#dlg').close();
+}
+async function removeEdit() {
+  const e = all.find(x => x.id === editing);
+  if (e.custom) { if (!confirm('Delete this exercise?')) return; delete state.custom[e.id]; selected = null; } else delete state.over[e.id];
+  await save(); merge(); fillLists(); render(); renderDetail(); $('#dlg').close();
+}
+function shrink(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => { const s = Math.min(1, 480 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', .85)); };
+    img.onerror = rej; img.src = url;
+  });
+}
+
+/* ---------- events ---------- */
+const pick = () => $('#dirInput').click();
+$('#pickBtn').onclick = pick; $('#folderBtn').onclick = pick;
+$('#dirInput').onchange = e => { if (e.target.files.length) readFolder([...e.target.files]); e.target.value = ''; };
+$('#list').addEventListener('click', ev => { const b = ev.target.closest('.item'); if (!b) return; selected = b.dataset.id; render(); renderDetail(); });
+$('#addBtn').onclick = () => openEdit(null);
+$('#saveBtn').onclick = saveEdit; $('#cancelBtn').onclick = () => $('#dlg').close(); $('#delBtn').onclick = removeEdit;
+$('#more').onclick = () => { shown += 120; render(); };
+for (const id of ['#q', '#fBody', '#fTarget', '#fEquip']) $(id).addEventListener('input', () => { shown = 120; render(); });
+$('#fImg').onchange = async e => { const f = e.target.files[0]; if (!f) return;
+  try { newImage = await shrink(f); $('#preview').src = newImage; } catch (_) { alert('That file could not be read as an image.'); } };
+$('#exportBtn').onclick = () => { const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(state)], { type: 'application/json' })); a.download = 'exercise-edits.json'; a.click(); };
+$('#importBtn').onclick = () => $('#importFile').click();
+$('#importFile').onchange = async e => {
+  try { const d = JSON.parse(await e.target.files[0].text());
+    state.over = { ...state.over, ...(d.over || {}) }; state.custom = { ...state.custom, ...(d.custom || {}) }; state.students = { ...state.students, ...(d.students || {}) }; state.plans = { ...state.plans, ...(d.plans || {}) }; renderStudents(); renderStudentForm();
+    await save(); if (base.length) { merge(); fillLists(); render(); renderDetail(); } }
+  catch (_) { alert('That file is not a valid backup.'); }
+  e.target.value = '';
+};
+/* ---------- students page ---------- */
+let stSel = null;
+const initials = n => n.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+const brief = s => [s.age && `${s.age} y`, s.height && `${s.height} cm`, s.weight && `${s.weight} kg`].filter(Boolean).join(' · ');
+function renderStudents() {
+  const q = $('#stQ').value.trim().toLowerCase();
+  const list = Object.values(state.students).filter(s => !q || s.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name));
+  $('#stCount').textContent = `${list.length} student${list.length === 1 ? '' : 's'}`;
+  $('#stList').innerHTML = list.map(s => `<button class="item" data-id="${esc(s.id)}" ${s.id === stSel ? 'aria-current="true"' : ''}><i class="av">${esc(initials(s.name))}</i><span><b>${esc(s.name)}</b><small>${esc(brief(s))}</small></span></button>`).join('') || '<p class="count">No students yet. Use “New student” to add the first one.</p>';
+}
+function renderStudentForm() {
+  const box = $('#stDetail');
+  if (!stSel) { box.innerHTML = '<div class="empty"><div><b>Select a student</b>Choose a student from the list, or add a new one.</div></div>'; return; }
+  const isNew = stSel === 'new', s = isNew ? { name: '', age: '', height: '', weight: '', notes: '' } : state.students[stSel];
+  box.innerHTML = `<h2 class="sth">${isNew ? 'New student' : esc(s.name)}</h2>
+  <div class="sform">
+    <label>Name<input id="sName" value="${esc(s.name)}" autocomplete="off"></label>
+    <div class="three">
+      <label>Age<input id="sAge" type="number" min="1" max="120" inputmode="numeric" value="${esc(s.age)}"></label>
+      <label>Height (cm)<input id="sH" type="number" min="50" max="260" inputmode="decimal" value="${esc(s.height)}"></label>
+      <label>Weight (kg)<input id="sW" type="number" min="20" max="400" step="0.1" inputmode="decimal" value="${esc(s.weight)}"></label>
+    </div>
+    <label>Notes<textarea id="sNotes" rows="6" placeholder="Goals, injuries, schedule, anything useful">${esc(s.notes)}</textarea></label>
+    <div class="acts">${isNew ? '' : '<button id="sDel" class="danger left">Delete student</button>'}<button id="sSave" class="primary">${isNew ? 'Add student' : 'Save changes'}</button></div>
+  </div>`;
+  $('#sSave').onclick = saveStudent;
+  if (!isNew) $('#sDel').onclick = deleteStudent;
+}
+async function saveStudent() {
+  const name = $('#sName').value.trim();
+  if (!name) { $('#sName').focus(); return; }
+  const id = stSel === 'new' ? 's' + Date.now() : stSel;
+  state.students[id] = { id, name, age: $('#sAge').value, height: $('#sH').value, weight: $('#sW').value, notes: $('#sNotes').value.trim() };
+  stSel = id; await save(); renderStudents(); renderStudentForm();
+}
+async function deleteStudent() {
+  if (!confirm('Delete this student?')) return;
+  delete state.students[stSel]; delete state.plans[stSel]; stSel = null;
+  await save(); renderStudents(); renderStudentForm();
+}
+function showPage(p) {
+  $('#pageEx').hidden = p !== 'ex'; $('#pageSt').hidden = p !== 'st'; $('#pagePl').hidden = p !== 'pl'; if (p === 'pl') renderPlan();
+  for (const [k, id] of [['ex', '#tabEx'], ['st', '#tabSt'], ['pl', '#tabPl']]) $(id).toggleAttribute('aria-current', p === k);
+  $('#tab' + ({ ex: 'Ex', st: 'St', pl: 'Pl' })[p]).setAttribute('aria-current', 'page');
+  
+}
+$('#tabEx').onclick = () => showPage('ex'); $('#tabSt').onclick = () => showPage('st');
+$('#stList').addEventListener('click', ev => { const b = ev.target.closest('.item'); if (!b) return; stSel = b.dataset.id; renderStudents(); renderStudentForm(); });
+$('#stAdd').onclick = () => { stSel = 'new'; renderStudents(); renderStudentForm(); $('#sName').focus(); };
+$('#stQ').addEventListener('input', renderStudents);
+(async () => {
+  const s = await load();
+  if (s) state = { over: s.over || {}, custom: s.custom || {}, students: s.students || {}, plans: s.plans || {} };
+  renderStudents(); renderStudentForm();
+})();
+/* ---------- plan page ---------- */
+const MUSCLES = new Set(['abs', 'abductors', 'adductors', 'biceps', 'calves', 'delts', 'forearms', 'glutes', 'hamstrings', 'lats', 'levator scapulae', 'pectorals', 'quads', 'serratus anterior', 'spine', 'traps', 'triceps', 'upper back']);
+const ALIAS = { shoulders: 'delts', deltoids: 'delts', 'rear deltoids': 'delts', 'front deltoids': 'delts', chest: 'pectorals', pecs: 'pectorals', core: 'abs', abdominals: 'abs', obliques: 'abs', 'lower back': 'spine', 'erector spinae': 'spine', back: 'lats', 'latissimus dorsi': 'lats', trapezius: 'traps', rhomboids: 'upper back', quadriceps: 'quads', 'hip flexors': 'quads', groin: 'adductors', 'inner thighs': 'adductors', 'hip abductors': 'abductors', 'glute medius': 'abductors', gluteus: 'glutes', 'gluteus maximus': 'glutes', glute: 'glutes', hamstring: 'hamstrings', calf: 'calves', soleus: 'calves', gastrocnemius: 'calves', 'wrist flexors': 'forearms', 'wrist extensors': 'forearms', brachialis: 'biceps', tricep: 'triceps', bicep: 'biceps' };
+const muscleKey = s => { const t = String(s || '').trim().toLowerCase(); return !t ? '' : MUSCLES.has(t) ? t : (ALIAS[t] || ''); };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const BASE_C = '<circle cx="100" cy="28" r="15"/><rect x="92" y="40" width="16" height="16"/><path d="M62 60 Q100 50 138 60 L140 130 Q138 170 130 196 L70 196 Q62 170 60 130 Z"/>';
+const BASE_H = '<ellipse cx="51" cy="104" rx="10" ry="34"/><ellipse cx="44" cy="158" rx="8" ry="30"/><ellipse cx="41" cy="198" rx="7" ry="11"/><ellipse cx="82" cy="250" rx="21" ry="62"/><ellipse cx="80" cy="328" rx="12" ry="42"/><ellipse cx="79" cy="378" rx="12" ry="7"/>';
+const BASE = `<g class='base'>${BASE_C}${BASE_H}<g transform='translate(200 0) scale(-1 1)'>${BASE_H}</g></g>`;
+const ARM = 'M48 90 Q42 108 46 128 L56 128 Q60 108 58 92 Z', FORE = 'M44 134 Q38 156 40 180 L50 180 Q54 156 54 134 Z', DELT = 'M60 64 Q48 70 48 88 Q56 96 66 88 Q70 74 64 64 Z', ABDUCT = 'M66 184 Q60 198 66 210 L72 206 Q70 194 74 186 Z';
+const FRONT = [['traps', 'M92 54 L74 63 Q80 68 90 66 Z'], ['delts', DELT], ['pectorals', 'M98 72 Q82 66 68 74 Q66 92 80 102 Q92 102 98 96 Z'], ['serratus anterior', 'M66 102 Q64 112 68 120 L75 118 Q73 110 74 103 Z'], ['biceps', ARM], ['forearms', FORE], ['abs', 'M86 104 L114 104 L112 168 Q100 176 88 168 Z', 1], ['abductors', ABDUCT], ['adductors', 'M92 200 Q96 230 94 262 L100 262 L100 204 Z'], ['quads', 'M70 200 Q64 240 70 276 L90 280 Q94 240 90 204 Q80 196 70 200 Z'], ['calves', 'M72 296 Q68 330 74 356 L86 356 Q90 330 86 296 Z']];
+const BACK = [['traps', 'M100 50 L78 62 L88 72 L100 80 Z'], ['levator scapulae', 'M92 44 L84 52 L90 56 L96 48 Z'], ['delts', DELT], ['upper back', 'M100 82 L86 76 Q80 90 88 104 L100 110 Z'], ['lats', 'M82 106 Q70 118 72 142 Q80 158 92 160 L98 150 Q90 132 88 108 Z'], ['spine', 'M92 150 L108 150 L108 196 L92 196 Z', 1], ['triceps', ARM], ['forearms', FORE], ['abductors', ABDUCT], ['glutes', 'M70 196 Q64 214 72 232 Q88 238 98 228 L98 200 Q84 190 70 196 Z'], ['hamstrings', 'M70 238 Q66 262 72 288 L90 288 Q94 262 92 236 Z'], ['calves', 'M72 296 Q66 326 74 356 L88 356 Q92 326 86 296 Z']];
+function figure(list, lv, label) {
+  const paths = list.map(([k, d, center]) => {
+    const a = `<path class='m' data-l='${lv[k] || ''}' d='${d}'/>`;
+    return center ? a : a + `<path class='m' data-l='${lv[k] || ''}' d='${d}' transform='translate(200 0) scale(-1 1)'/>`;
+  }).join('');
+  return `<svg viewBox='0 0 200 400' role='img' aria-label='${label}'>${BASE}${paths}</svg>`;
+}
+let plDay = 0, saveT;
+const saveSoon = () => { clearTimeout(saveT); saveT = setTimeout(save, 400); };
+const resolve = x => all.find(e => e.id === x.id) || { name: x.n, target: x.t, secondary: x.s, image: '' };
+function getPlan() {
+  const k = $('#plStudent').value || 'none';
+  if (!state.plans[k]) state.plans[k] = { days: 3, titles: [], routines: [] };
+  const p = state.plans[k];
+  while (p.routines.length < 7) p.routines.push([]);
+  return p;
+}
+function renderPlan() {
+  const sel = $('#plStudent'), cur = sel.value;
+  const studs = Object.values(state.students).sort((a, b) => a.name.localeCompare(b.name));
+  sel.innerHTML = `<option value=''>No student (draft)</option>` + studs.map(s => `<option value='${esc(s.id)}'>${esc(s.name)}</option>`).join('');
+  sel.value = studs.some(s => s.id === cur) ? cur : '';
+  const p = getPlan(); plDay = Math.min(plDay, p.days - 1);
+  $('#plDays').innerHTML = [1, 2, 3, 4, 5, 6, 7].map(n => `<button data-n='${n}' aria-pressed='${p.days === n}'>${n}</button>`).join('');
+  $('#plTabs').innerHTML = Array.from({ length: p.days }, (_, i) => `<button data-d='${i}' role='tab' aria-selected='${i === plDay}'>Day ${i + 1}${p.titles[i] ? ': ' + esc(p.titles[i]) : ''}</button>`).join('');
+  renderDay(); renderMap();
+}
+function renderDay() {
+  const p = getPlan(), r = p.routines[plDay], sets = r.reduce((a, x) => a + (+x.sets || 0), 0);
+  const rows = r.map((x, i) => {
+    const e = resolve(x), u = fileUrl(e.image);
+    return `<div class='row'>${u ? `<img src='${esc(u)}' alt=''>` : `<span class='ph'></span>`}<span class='rn'>${esc(e.name)}</span>
+      <label class='mini'>Sets<input data-i='${i}' data-f='sets' type='number' min='1' max='20' inputmode='numeric' value='${esc(x.sets)}'></label>
+      <label class='mini'>Reps<input data-i='${i}' data-f='reps' value='${esc(x.reps)}'></label>
+      <span class='mv'><button data-i='${i}' data-act='up' aria-label='Move up'>↑</button><button data-i='${i}' data-act='down' aria-label='Move down'>↓</button><button data-i='${i}' data-act='del' class='danger' aria-label='Remove exercise'>✕</button></span></div>`;
+  }).join('') || `<p class='count'>No exercises yet. Add the first one for this day.</p>`;
+  $('#plDay').innerHTML = `<label class='dtitle'>Day ${plDay + 1} title<input id='plTitle' value='${esc(p.titles[plDay] || '')}' placeholder='Optional, for example Chest and triceps'></label>${rows}
+    <p class='plfoot'><button id='plAdd' class='primary'>Add exercise</button><span class='count'>${r.length} exercise${r.length === 1 ? '' : 's'} · ${sets} sets</span></p>`;
+}
+function renderMap() {
+  const r = getPlan().routines[plDay], box = $('#plMap');
+  if (!r.length) { box.innerHTML = `<div class='empty'><div><b>Muscle map</b>Add exercises to this day to see which muscles it works.</div></div>`; return; }
+  const prim = {}, sec = new Set(), other = new Set();
+  for (const x of r) {
+    const e = resolve(x), k = muscleKey(e.target);
+    if (k) prim[k] = (prim[k] || 0) + (+x.sets || 0); else if (e.target) other.add(e.target);
+    for (const s of String(e.secondary || '').split(',')) { const sk = muscleKey(s); if (sk) sec.add(sk); else if (s.trim()) other.add(s.trim()); }
+  }
+  for (const k in prim) sec.delete(k);
+  const lv = {}; for (const k of sec) lv[k] = 's'; for (const k in prim) lv[k] = 'p';
+  const names = Object.entries(prim).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${cap(k)} (${n} sets)`);
+  box.innerHTML = `<h2 class='sth'>Muscles worked on day ${plDay + 1}</h2>
+    <div class='fig'><figure>${figure(FRONT, lv, 'Front view')}<figcaption>Front</figcaption></figure><figure>${figure(BACK, lv, 'Back view')}<figcaption>Back</figcaption></figure></div>
+    <p class='mgrp'><span class='sw' style='background:var(--pri)'></span><b>Primary:</b> ${esc(names.join(', ') || 'none')}</p>
+    <p class='mgrp'><span class='sw' style='background:var(--sec)'></span><b>Secondary:</b> ${esc([...sec].map(cap).join(', ') || 'none')}</p>
+    ${other.size ? `<p class='mgrp count'>Not drawn on the figure: ${esc([...other].join(', '))}</p>` : ''}`;
+}
+function openPicker() {
+  if (!all.length) { alert('Choose the dataset folder in the Exercises tab first.'); return; }
+  $('#pickDay').textContent = plDay + 1; $('#pMsg').textContent = '';
+  fillSelect($('#pE'), 'equipment', 'All equipment'); fillSelect($('#pT'), 'target', 'All muscles'); fillSelect($('#pB'), 'body_part', 'All body parts');
+  $('#pE').value = $('#pT').value = $('#pB').value = ''; $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pick').showModal();
+}
+function renderPick() {
+  const q = $('#pQ').value.trim().toLowerCase(), t = $('#pT').value, eq = $('#pE').value, bp = $('#pB').value;
+  const list = all.filter(e => (!q || e.name.toLowerCase().includes(q)) && (!t || e.target === t) && (!eq || e.equipment === eq) && (!bp || e.body_part === bp)).slice(0, 80);
+  $('#pList').innerHTML = list.map(e => `<button class='item' data-id='${esc(e.id)}'><img src='${esc(fileUrl(e.image))}' alt='' loading='lazy'><span><b>${esc(e.name)}</b><small>${esc(e.target)}</small></span></button>`).join('') || `<p class='count'>No exercise matches.</p>`;
+}
+$('#tabPl').onclick = () => showPage('pl');
+$('#plStudent').onchange = () => { plDay = 0; renderPlan(); };
+$('#plDays').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; getPlan().days = +b.dataset.n; saveSoon(); renderPlan(); });
+$('#plTabs').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; plDay = +b.dataset.d; renderPlan(); });
+$('#plDay').addEventListener('input', ev => {
+  const t = ev.target, p = getPlan();
+  if (t.id === 'plTitle') {
+    p.titles[plDay] = t.value; saveSoon();
+    const tb = $('#plTabs').children[plDay]; if (tb) tb.textContent = 'Day ' + (plDay + 1) + (t.value.trim() ? ': ' + t.value.trim() : '');
+    return;
+  }
+  if (t.dataset.f) {
+    const x = p.routines[plDay][+t.dataset.i]; if (!x) return;
+    x[t.dataset.f] = t.dataset.f === 'sets' ? Math.max(1, Math.min(20, parseInt(t.value) || 1)) : t.value;
+    saveSoon(); renderMap();
+  }
+});
+$('#plDay').addEventListener('click', ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  if (b.id === 'plAdd') { openPicker(); return; }
+  const r = getPlan().routines[plDay], i = +b.dataset.i, a = b.dataset.act;
+  if (a === 'del') r.splice(i, 1);
+  else if (a === 'up' && i > 0) { const t = r[i - 1]; r[i - 1] = r[i]; r[i] = t; }
+  else if (a === 'down' && i < r.length - 1) { const t = r[i + 1]; r[i + 1] = r[i]; r[i] = t; }
+  else return;
+  saveSoon(); renderDay(); renderMap();
+});
+$('#pList').addEventListener('click', ev => {
+  const b = ev.target.closest('.item'); if (!b) return;
+  const e = all.find(x => x.id === b.dataset.id); if (!e) return;
+  getPlan().routines[plDay].push({ id: e.id, n: e.name, t: e.target, s: e.secondary, sets: 3, reps: '10' });
+  saveSoon(); renderDay(); renderMap();
+  $('#pMsg').textContent = `Added ${e.name} (3 sets of 10). Change sets and reps in the day list.`;
+});
+$('#pQ').addEventListener('input', () => { $('#pX').hidden = !$('#pQ').value; renderPick(); });
+for (const id of ['#pE', '#pT', '#pB']) $(id).addEventListener('change', renderPick);
+$('#pX').onclick = () => { $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pQ').focus(); }; $('#pClose').onclick = () => $('#pick').close();
+</script>
+</body>
+</html>
