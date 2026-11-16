@@ -1,0 +1,9 @@
+{
+  // Cloudflare deploy config: publishes the "app" folder as a static website.
+  // "name" must match the project name typed in the Cloudflare dashboard.
+  "name": "trainer-app",
+  "compatibility_date": "2026-11-16",
+  "assets": {
+    "directory": "./app"
+  }
+}
