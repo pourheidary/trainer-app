@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="light" style="color-scheme: light;"><head><!-- frame-runtime --><!-- /frame-runtime -->
+<html lang="en"><head><!-- frame-runtime --><!-- /frame-runtime -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.10">
-<meta name="app-notes" content="Exercise info rows aligned with the bottom of the animation">
+<meta name="app-version" content="1.12">
+<meta name="app-notes" content="Body-part chart: color tiers end at the guide lines (3, 10, 20 sets) and 1, 2, 3 sets have different bar widths">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -281,6 +281,13 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
 .xvdesc{margin-top:18px}
 .xvdesc p{margin:0;max-width:70ch}
 #exInfo{width:min(680px,94vw)}
+.bpwrap{position:relative;padding-top:16px}
+.bpg{position:absolute;top:0;bottom:0;left:100px;right:0;pointer-events:none;z-index:2}
+.bpg span{position:absolute;top:14px;bottom:0;border-left:1px dotted var(--ink);opacity:.55}
+.bpg i{position:absolute;top:-14px;left:0;transform:translateX(-50%);font-size:.65rem;font-style:normal;line-height:1;color:var(--mute)}
+.bpb.vlo{background:#8cc4ff;color:#0b2a4d}
+.bpb{min-width:0;padding:0 4px;overflow:hidden}
+.bpb.tiny{padding:0;justify-content:center;font-size:.6rem}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -352,7 +359,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.10. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
+<footer>Version 1.12. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
 
 <dialog id="exInfo">
   <div class="dlg">
@@ -798,9 +805,11 @@ function analyse(rows) {
 }
 function bpChart(bp) {
   const items = Object.entries(bp).sort((x, y) => y[1] - x[1]); if (!items.length) return '';
-  return `<div class='bpc'><div class='bph'>Weekly sets per body part</div>${items.map(([k, n]) => `<div class='bpr'><span class='bpn'>${esc(cap(k))}</span><span class='bpt'><span class='bpb ${n < 10 ? 'lo' : n <= 20 ? 'ok' : 'hi'}' style='width:${Math.min(100, n / 30 * 100)}%'>${n}</span></span></div>`).join('')}</div>`;
+  const MAX = 24, tier = n => n <= 3 ? 'vlo' : n <= 10 ? 'lo' : n <= 20 ? 'ok' : 'hi';
+  return `<div class='bpc'><div class='bph'>Weekly sets per body part</div><div class='bpwrap'>
+    <div class='bpg' aria-hidden='true'>${[3, 10, 20].map(v => `<span style='left:${v / MAX * 100}%'><i>${v}</i></span>`).join('')}</div>
+    ${items.map(([k, n]) => `<div class='bpr'><span class='bpn'>${esc(cap(k))}</span><span class='bpt'><span class='bpb ${tier(n)}${n <= 2 ? ' tiny' : ''}' style='width:${Math.min(100, n / MAX * 100)}%'>${n}</span></span></div>`).join('')}</div></div>`;
 }
-const SS_COLORS = ['#f08c00', '#8e4ec6', '#12a594', '#d6409f', '#3e63dd', '#978365'];
 function layoutRows(r) {
   const out = []; let n = 0, i = 0, g = 0;
   while (i < r.length) {
