@@ -3,8 +3,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.7">
-<meta name="app-notes" content="Each superset group gets its own color">
+<meta name="app-version" content="1.10">
+<meta name="app-notes" content="Exercise info rows aligned with the bottom of the animation">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -271,6 +271,16 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
 .sx button img{width:var(--ctl);height:var(--ctl)}
 .seg.sx button[aria-pressed='true']{background:none;border:0;box-shadow:0 0 0 3px var(--accent)}
 .sx button[aria-pressed='false'] img{opacity:.55;filter:grayscale(.35)}
+.xvname{margin:0 0 14px;font-size:1.5rem;line-height:1.25;letter-spacing:-.01em;text-transform:capitalize}
+.xvrow{display:flex;gap:22px;align-items:flex-end;flex-wrap:wrap}
+.xvimg{flex:none;max-width:100%;align-self:flex-start}
+.xvimg img,#exInfo .xvimg img{display:block;width:auto;max-width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;margin:0;background:#fff;border-radius:10px;border:1px solid var(--line)}
+.xvmus{flex:1 1 220px;min-width:0;align-self:flex-end}
+.xvmus .mgrp:last-child{margin-bottom:0}
+.xvmus .figs{justify-content:flex-start;margin-bottom:12px}
+.xvdesc{margin-top:18px}
+.xvdesc p{margin:0;max-width:70ch}
+#exInfo{width:min(680px,94vw)}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -342,7 +352,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.7. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
+<footer>Version 1.10. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
 
 <dialog id="exInfo">
   <div class="dlg">
@@ -489,12 +499,7 @@ function render() {
 function renderDetail() {
   const e = all.find(x => x.id === selected), box = $('#detail');
   if (!e) { box.innerHTML = '<div class="empty"><div><b>Select an exercise</b>Click an exercise in the library to see it here.</div></div>'; return; }
-  const chips = [e.target, e.body_part, e.equipment].filter(Boolean).map(c => `<span class="chip">${esc(c)}</span>`).join('');
-  box.innerHTML = `<div class="hero"><img src="${esc(fileUrl(e.gif || e.image))}" alt="${esc(e.name)}">
-    <div class="info"><h2>${esc(e.name)}</h2><div class="chips">${chips}</div>
-    ${e.secondary ? `<h3>Secondary muscles</h3><p>${esc(e.secondary)}</p>` : ''}
-    ${e.instructions ? `<h3>Instructions</h3><p>${esc(e.instructions)}</p>` : ''}
-    <p style="margin-top:18px"><button id="editBtn" class="primary">Edit exercise</button></p></div></div>`;
+  box.innerHTML = exView(e, state.sex === 'FEMALE' ? 'FEMALE' : 'MALE', true) + `<p style="margin-top:18px"><button id="editBtn" class="primary">Edit exercise</button></p>`;
   $('#editBtn').onclick = () => openEdit(e.id);
 }
 
@@ -820,16 +825,29 @@ function toggleLink(r, i) {
   for (let k = a; k <= b; k++) r[k].ss = id;
   return true;
 }
+function muscleLegend(a) {
+  const prim = Object.keys(a.prim).map(cap).join(', ') || 'none', sec = [...a.sec].map(cap).join(', ') || 'none';
+  return `<p class='mgrp'><b>Primary:</b> ${esc(prim)}</p>
+    <p class='mgrp'><b>Secondary:</b> ${esc(sec)}</p>
+    ${a.other.size ? `<p class='mgrp count ndraw'>Not drawn on the figure: ${esc([...a.other].join(', '))}</p>` : ''}`;
+}
+function exView(e, sex, showName) {
+  const u = fileUrl(e.gif || e.image), a = analyse([{ id: e.id, n: e.name, t: e.target, s: e.secondary, b: e.body_part, sets: 1 }]);
+  const chips = [e.target, e.body_part, e.equipment].filter(Boolean).map(c => `<span class='chip'>${esc(c)}</span>`).join('');
+  return `<div class='xv'>${showName ? `<h2 class='xvname'>${esc(e.name)}</h2>` : ''}
+    <div class='xvrow'>
+      <div class='xvimg'>${u ? `<img src='${esc(u)}' alt='${esc(e.name)}'>` : `<p class='count'>${all.length ? 'No picture for this exercise.' : 'Choose the dataset folder (folder icon, top right) to see the animation.'}</p>`}</div>
+      <div class='xvmus'>${muscleLegend(a)}</div>
+    </div>
+    <div class='xvdesc'>${chips ? `<div class='chips'>${chips}</div>` : ''}${e.instructions ? `<h3 class='mh'>Instructions</h3><p>${esc(e.instructions)}</p>` : ''}</div>
+  </div>`;
+}
 function openInfo(id) {
   const p = getPlan(), row = p ? p.routines.flat().find(x => x.id === id) : null;
-  const e = all.find(x => x.id === id) || (row ? resolve(row) : null); if (!e) return;
-  const u = fileUrl(e.gif || e.image);
-  const chips = [e.target, e.body_part, e.equipment].filter(Boolean).map(c => `<span class='chip'>${esc(c)}</span>`).join('');
+  const e0 = all.find(x => x.id === id) || (row ? resolve(row) : null); if (!e0) return;
+  const e = { ...e0, id };
   $('#eiName').textContent = e.name;
-  $('#eiBody').innerHTML = `${u ? `<img src='${esc(u)}' alt='${esc(e.name)}'>` : `<p class='count'>Choose the dataset folder (folder icon, top right) to see the animation.</p>`}
-    <div class='chips' style='margin-top:12px'>${chips}</div>
-    ${e.secondary ? `<h3 class='mh'>Secondary muscles</h3><p>${esc(e.secondary)}</p>` : ''}
-    ${e.instructions ? `<h3 class='mh'>Instructions</h3><p>${esc(e.instructions)}</p>` : ''}`;
+  $('#eiBody').innerHTML = exView(e, p ? planSex(p) : 'MALE', false);
   $('#exInfo').showModal();
 }
 function legend(a, pal) {
