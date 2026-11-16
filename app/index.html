@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en"><head><!-- frame-runtime --><!-- /frame-runtime -->
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.12">
-<meta name="app-notes" content="Body-part chart: color tiers end at the guide lines (3, 10, 20 sets) and 1, 2, 3 sets have different bar widths">
+<meta name="app-version" content="1.18">
+<meta name="app-notes" content="Dataset folder picker only inside Claude; the website reads the data folders next to the app">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -288,6 +289,12 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
 .bpb.vlo{background:#8cc4ff;color:#0b2a4d}
 .bpb{min-width:0;padding:0 4px;overflow:hidden}
 .bpb.tiny{padding:0;justify-content:center;font-size:.6rem}
+.plrow{display:flex;flex-wrap:wrap;grid-template-columns:none;gap:12px 16px;align-items:flex-end;margin-bottom:16px}
+.plrow>label{flex:1 1 120px;min-width:110px}
+.plrow>.fld{flex:none}
+.plrow .seg:not(.sx) button{min-width:34px;padding:0 6px}
+.r3 button{display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.r3 button svg{display:block}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -296,24 +303,24 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
   <h1>Trainer app</h1>
   <nav class="tabs" aria-label="Pages"><button id="tabEx" aria-current="page">Exercises</button><button id="tabSt">Students</button><button id="tabPl">Plan</button></nav>
   <div class="acts">
-    <button id="folderBtn" class="ibtn" title="Dataset folder" aria-label="Dataset folder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></button>
-    <button id="ghBtn" class="ibtn" data-new="true" title="Save this version for GitHub" aria-label="Save this version for GitHub"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></button>
-    <button id="exportBtn" class="ibtn" title="Export backup" aria-label="Export backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"></path></svg></button>
-    <button id="importBtn" class="ibtn" title="Import backup" aria-label="Import backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"></path></svg></button>
-    <input id="importFile" type="file" accept="application/json" hidden="">
+    <button id="folderBtn" hidden class="ibtn" title="Dataset folder" aria-label="Dataset folder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+    <button id="ghBtn" class="ibtn" data-new="true" title="Save this version for GitHub" aria-label="Save this version for GitHub"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></button>
+    <button id="exportBtn" class="ibtn" title="Export backup" aria-label="Export backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></button>
+    <button id="importBtn" class="ibtn" title="Import backup" aria-label="Import backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"/></svg></button>
+    <input id="importFile" type="file" accept="application/json" hidden>
   </div>
 </div>
 
 <div id="pageEx">
 <div id="welcome" class="panel welcome">
-  <h2>Choose your dataset folder</h2>
-  <p>Select the folder that contains <b>data</b>, <b>images</b> and <b>videos</b>. Your browser may say “upload”, but nothing leaves your computer; the files are only read here.</p>
-  <button id="pickBtn" class="primary">Choose folder</button>
+  <h2 id="wTitle">Loading exercises…</h2>
+  <p id="wText">Reading the exercise data stored next to the app.</p>
+  <button id="pickBtn" class="primary" hidden>Choose folder</button>
   <div id="err" class="err" role="alert"></div>
-  <input id="dirInput" type="file" webkitdirectory="" multiple="" hidden="">
+  <input id="dirInput" type="file" webkitdirectory multiple hidden>
 </div>
 
-<div id="app" class="layout" hidden="">
+<div id="app" class="layout" hidden>
   <section id="detail" class="panel"></section>
   <aside class="panel">
     <div class="ahead"><b>Library</b><button id="addBtn" class="link">+ Custom exercise</button></div>
@@ -325,12 +332,12 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </div>
     <p id="count" class="count"></p>
     <div id="list"></div>
-    <button id="more" class="link" hidden="">Show more</button>
+    <button id="more" class="link" hidden>Show more</button>
   </aside>
 </div>
 </div>
 
-<div id="pageSt" hidden="">
+<div id="pageSt" hidden>
   <div class="layout">
     <section id="stDetail" class="panel det"></section>
     <aside class="panel">
@@ -341,51 +348,51 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<div id="pagePl" hidden="">
-  <div class="fbar">
-    <input id="plQ" type="search" placeholder="Search plans" aria-label="Search plans">
-    <select id="plFDays" aria-label="Training days"></select>
-    <select id="plFMuscle" aria-label="Muscle"></select>
-    <select id="plFBody" aria-label="Body part"></select>
-    <select id="plFLevel" aria-label="Level"></select>
-    <select id="plFGoal" aria-label="Goal"></select>
+<div id='pagePl' hidden>
+  <div class='fbar'>
+    <input id='plQ' type='search' placeholder='Search plans' aria-label='Search plans'>
+    <select id='plFDays' aria-label='Training days'></select>
+    <select id='plFMuscle' aria-label='Muscle'></select>
+    <select id='plFBody' aria-label='Body part'></select>
+    <select id='plFLevel' aria-label='Level'></select>
+    <select id='plFGoal' aria-label='Goal'></select>
   </div>
-  <div class="layout">
-    <section id="plEditor" class="panel det"></section>
-    <aside class="panel">
-      <div class="ahead"><b>Plans</b><button id="plNew" class="link">+ New plan</button></div>
-      <p id="plCount" class="count"></p>
-      <div id="plList"></div>
+  <div class='layout'>
+    <section id='plEditor' class='panel det'></section>
+    <aside class='panel'>
+      <div class='ahead'><b>Plans</b><button id='plNew' class='link'>+ New plan</button></div>
+      <p id='plCount' class='count'></p>
+      <div id='plList'></div>
     </aside>
   </div>
 </div>
-<footer>Version 1.12. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
+<footer>Version 1.18. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
-<dialog id="exInfo">
-  <div class="dlg">
-    <div class="plhead2"><h2 id="eiName" style="margin:0;flex:1;text-transform:capitalize"></h2><button id="eiClose" class="ibtn" aria-label="Close">✕</button></div>
-    <div id="eiBody"></div>
+<dialog id='exInfo'>
+  <div class='dlg'>
+    <div class='plhead2'><h2 id='eiName' style='margin:0;flex:1;text-transform:capitalize'></h2><button id='eiClose' class='ibtn' aria-label='Close'>&#10005;</button></div>
+    <div id='eiBody'></div>
   </div>
 </dialog>
 
-<dialog id="asgDlg">
-  <div class="dlg">
-    <h2 id="asgTitle">Assign program</h2>
-    <div id="asgBody" class="sform"></div>
-    <div class="acts"><button id="asgDel" class="danger left" hidden="">Delete</button><button id="asgCancel">Cancel</button><button id="asgSave" class="primary">Save</button></div>
+<dialog id='asgDlg'>
+  <div class='dlg'>
+    <h2 id='asgTitle'>Assign program</h2>
+    <div id='asgBody' class='sform'></div>
+    <div class='acts'><button id='asgDel' class='danger left' hidden>Delete</button><button id='asgCancel'>Cancel</button><button id='asgSave' class='primary'>Save</button></div>
   </div>
 </dialog>
 
-<div id="toast" class="toast" role="status" hidden=""></div>
+<div id="toast" class="toast" role="status" hidden></div>
 
-<dialog id="pick">
-  <div class="dlg">
-    <h2>Add exercise to day <span id="pickDay"></span></h2>
-    <div class="clr"><input id="pQ" type="text" autocomplete="off" placeholder="Search exercises" aria-label="Search exercises"><button id="pX" type="button" class="x" aria-label="Clear search" hidden="">✕</button></div>
-    <div class="three"><select id="pE" aria-label="Equipment"></select><select id="pT" aria-label="Muscle"></select><select id="pB" aria-label="Body part"></select></div>
-    <div id="pList" class="plist"></div>
-    <p id="pMsg" class="count" role="status"></p>
-    <div class="acts"><button id="pClose" class="primary">Done</button></div>
+<dialog id='pick'>
+  <div class='dlg'>
+    <h2>Add exercise to day <span id='pickDay'></span></h2>
+    <div class='clr'><input id='pQ' type='text' autocomplete='off' placeholder='Search exercises' aria-label='Search exercises'><button id='pX' type='button' class='x' aria-label='Clear search' hidden>✕</button></div>
+    <div class='three'><select id='pE' aria-label='Equipment'></select><select id='pT' aria-label='Muscle'></select><select id='pB' aria-label='Body part'></select></div>
+    <div id='pList' class='plist'></div>
+    <p id='pMsg' class='count' role='status'></p>
+    <div class='acts'><button id='pClose' class='primary'>Done</button></div>
   </div>
 </dialog>
 
@@ -405,7 +412,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     <label>Instructions<textarea id="eInstr" rows="5"></textarea></label>
     <datalist id="bodyList"></datalist><datalist id="targetList"></datalist><datalist id="equipList"></datalist>
     <div class="acts">
-      <button id="delBtn" class="danger left" hidden=""></button>
+      <button id="delBtn" class="danger left" hidden></button>
       <button id="cancelBtn">Cancel</button>
       <button id="saveBtn" class="primary">Save changes</button>
     </div>
@@ -428,7 +435,7 @@ const matchName = (name, q) => {
   const n = String(name).toLowerCase().replace(/[-_]/g, ' ');
   return toks.every(t => n.includes(t) || (t.length > 3 && t.endsWith('s') && n.includes(t.slice(0, -1))));
 };
-let files = {}, urls = {}, base = [], all = [], shown = 120, selected = null, editing = null, newImage = null;
+let base = [], all = [], shown = 120, selected = null, editing = null, newImage = null;
 let state = { over: {}, custom: {}, students: {}, plans: {}, planLib: {} };
 
 /* ---------- saved edits (browser storage; may be empty) ---------- */
@@ -449,12 +456,20 @@ async function save() {
 }
 
 /* ---------- dataset folder ---------- */
+const IN_CLAUDE = !!(window.claude && window.claude.use);
+let files = {}, urls = {};
 function fileUrl(path) {
   if (!path) return '';
-  if (path.startsWith('data:')) return path;
+  if (path.startsWith('data:') || !IN_CLAUDE) return path;
   if (urls[path]) return urls[path];
   const f = files[path]; if (!f) return '';
   return (urls[path] = URL.createObjectURL(f));
+}
+function showApp() {
+  merge(); fillLists(); selected = null;
+  $('#welcome').hidden = true; $('#app').hidden = false;
+  render(); renderDetail();
+  if (!$('#pagePl').hidden) renderPlan();
 }
 async function readFolder(list) {
   files = {}; urls = {};
@@ -463,10 +478,26 @@ async function readFolder(list) {
   if (!j) { $('#err').textContent = 'data/exercises.json was not found. Select the folder that contains the data, images and videos folders.'; return; }
   try { base = JSON.parse(await j.text()); } catch (e) { $('#err').textContent = 'data/exercises.json could not be read.'; return; }
   $('#err').textContent = '';
-  
-  merge(); fillLists(); selected = null;
-  $('#welcome').hidden = true; $('#app').hidden = false; $('#folderBtn').hidden = false;
-  render(); renderDetail();
+  showApp();
+}
+async function loadData() {
+  if (IN_CLAUDE) {
+    $('#wTitle').textContent = 'Choose your dataset folder';
+    $('#wText').textContent = 'Preview inside Claude: select the folder that contains data, images and videos. Files are only read on your computer.';
+    $('#pickBtn').hidden = false; $('#folderBtn').hidden = false;
+    return;
+  }
+  try {
+    const r = await fetch('data/exercises.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    base = await r.json();
+  } catch (e) {
+    $('#wTitle').textContent = 'Exercise data not found';
+    $('#wText').textContent = 'The data, images and videos folders must sit next to this page. If you opened the file straight from disk, serve its folder instead, for example with: python3 -m http.server 8000';
+    $('#err').textContent = String((e && e.message) || e);
+    return;
+  }
+  showApp();
 }
 
 /* ---------- data ---------- */
@@ -744,6 +775,7 @@ $('#stQ').addEventListener('input', renderStudents);
     if (!s.planLib && s.plans) { let i = 0; for (const [k, lp] of Object.entries(s.plans)) if (lp.routines && lp.routines.some(r => r.length)) { const id = 'm' + k; state.planLib[id] = { id, name: 'Imported plan ' + (++i), days: lp.days || 3, level: 'Beginner', goal: 'General fitness', titles: lp.titles || [], routines: lp.routines }; } }
   }
   updateGh(); renderStudents(); renderStudentForm();
+  await loadData();
 })();
 /* ---------- plan page ---------- */
 const MUSCLES = new Set(['abs', 'abductors', 'adductors', 'biceps', 'calves', 'delts', 'forearms', 'glutes', 'hamstrings', 'lats', 'levator scapulae', 'pectorals', 'quads', 'serratus anterior', 'spine', 'traps', 'triceps', 'upper back']);
@@ -845,7 +877,7 @@ function exView(e, sex, showName) {
   const chips = [e.target, e.body_part, e.equipment].filter(Boolean).map(c => `<span class='chip'>${esc(c)}</span>`).join('');
   return `<div class='xv'>${showName ? `<h2 class='xvname'>${esc(e.name)}</h2>` : ''}
     <div class='xvrow'>
-      <div class='xvimg'>${u ? `<img src='${esc(u)}' alt='${esc(e.name)}'>` : `<p class='count'>${all.length ? 'No picture for this exercise.' : 'Choose the dataset folder (folder icon, top right) to see the animation.'}</p>`}</div>
+      <div class='xvimg'>${u ? `<img src='${esc(u)}' alt='${esc(e.name)}'>` : `<p class='count'>${all.length ? 'No picture for this exercise.' : 'Exercise data is not loaded.'}</p>`}</div>
       <div class='xvmus'>${muscleLegend(a)}</div>
     </div>
     <div class='xvdesc'>${chips ? `<div class='chips'>${chips}</div>` : ''}${e.instructions ? `<h3 class='mh'>Instructions</h3><p>${esc(e.instructions)}</p>` : ''}</div>
@@ -909,8 +941,8 @@ function renderEditor() {
   const tools = plAssign ? '' : `<button id='plDup' class='ibtn' title='Duplicate plan' aria-label='Duplicate plan'>${ICON("<rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V6a2 2 0 0 1 2-2h9'/>")}</button>
       <button id='plDel' class='ibtn danger' title='Delete plan' aria-label='Delete plan'>${ICON("<path d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/>")}</button>`;
   box.innerHTML = `${bar}<div class='plhead2'><input id='plName' class='plname' value='${esc(p.name)}' placeholder='Plan name' aria-label='Plan name' autocomplete='off'>${tools}</div>
-    <div class='fl'><span>Training days per week</span><div class='seg' role='group' aria-label='Training days per week'>${[1, 2, 3, 4, 5, 6, 7].map(n => `<button data-n='${n}' aria-pressed='${p.days === n}'>${n}</button>`).join('')}</div></div>
     <div class='plrow'><label class='fl' style='margin:0'>Level<select id='plLevel'>${sel(LEVELS, p.level)}</select></label><label class='fl' style='margin:0'>Goal<select id='plGoal'>${sel(GOALS, p.goal)}</select></label>
+      <div class='fld'><span>Training days per week</span><div class='seg' role='group' aria-label='Training days per week'>${[1, 2, 3, 4, 5, 6, 7].map(n => `<button data-n='${n}' aria-pressed='${p.days === n}'>${n}</button>`).join('')}</div></div>
       <div class='fld'><span>Designed for</span><div class='seg sx' role='group' aria-label='Designed for'><button type='button' data-psx='MALE' aria-pressed='${sx === 'MALE'}' aria-label='Men' title='Designed for men'>${MARS}</button><button type='button' data-psx='FEMALE' aria-pressed='${sx === 'FEMALE'}' aria-label='Women' title='Designed for women'>${VENUS}</button></div></div></div>
     <div id='plTabs' class='daytabs' role='tablist' aria-label='Training days'></div>
     <div id='plDay'></div>`;
@@ -944,7 +976,7 @@ function renderDay() {
   renderSummary();
 }
 function openPicker() {
-  if (!all.length) { alert('Choose the dataset folder in the Exercises tab first.'); return; }
+  if (!all.length) { alert('Exercise data is not loaded yet.'); return; }
   $('#pickDay').textContent = plDay + 1; $('#pMsg').textContent = '';
   fillSelect($('#pE'), 'equipment', 'All equipment'); fillSelect($('#pT'), 'target', 'All muscles'); fillSelect($('#pB'), 'body_part', 'All body parts');
   $('#pE').value = $('#pT').value = $('#pB').value = ''; $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pick').showModal();
@@ -1035,6 +1067,7 @@ let toastT;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 9000); }
 function updateGh() {
   const b = $('#ghBtn'), fresh = state.savedVersion !== APP_VERSION;
+  b.hidden = !(window.claude && window.claude.use);
   b.dataset.new = String(fresh);
   b.title = fresh ? `New version ${APP_VERSION} not saved yet. Click to save a copy for GitHub` : `Version ${APP_VERSION} saved. Click to save the file again`;
   b.setAttribute('aria-label', b.title);
@@ -1063,4 +1096,6 @@ function enhanceSearch(el) {
 $('#pQ').addEventListener('input', () => { $('#pX').hidden = !$('#pQ').value; renderPick(); });
 for (const id of ['#pE', '#pT', '#pB']) $(id).addEventListener('change', renderPick);
 $('#pX').onclick = () => { $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pQ').focus(); }; $('#pClose').onclick = () => $('#pick').close();
-</script></body></html>
+</script>
+</body>
+</html>
