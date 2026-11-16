@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en" data-theme="light" style="color-scheme: light;"><head><!-- frame-runtime --><!-- /frame-runtime -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
+<meta name="app-version" content="1.1">
+<meta name="app-notes" content="GitHub save button with version tracking">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -223,6 +224,10 @@ input:not([type='file']),select{height:var(--ctl)}
 .av{padding:3px;overflow:hidden}
 .av[data-st='']{background:var(--line)}
 .av img{width:100%;height:100%;border-radius:50%;display:block}
+#ghBtn{position:relative}
+#ghBtn[data-new='true']{border-color:var(--accent);color:var(--accent)}
+#ghBtn[data-new='true']::after{content:'';position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 2px var(--surface)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:10px;max-width:min(560px,90vw);z-index:30;box-shadow:0 6px 24px rgba(0,0,0,.3)}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -231,10 +236,11 @@ input:not([type='file']),select{height:var(--ctl)}
   <h1>Trainer app</h1>
   <nav class="tabs" aria-label="Pages"><button id="tabEx" aria-current="page">Exercises</button><button id="tabSt">Students</button><button id="tabPl">Plan</button></nav>
   <div class="acts">
-    <button id="folderBtn" class="ibtn" title="Dataset folder" aria-label="Dataset folder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
-    <button id="exportBtn" class="ibtn" title="Export backup" aria-label="Export backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></button>
-    <button id="importBtn" class="ibtn" title="Import backup" aria-label="Import backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"/></svg></button>
-    <input id="importFile" type="file" accept="application/json" hidden>
+    <button id="folderBtn" class="ibtn" title="Dataset folder" aria-label="Dataset folder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></button>
+    <button id="ghBtn" class="ibtn" data-new="true" title="Save this version for GitHub" aria-label="Save this version for GitHub"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></button>
+    <button id="exportBtn" class="ibtn" title="Export backup" aria-label="Export backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"></path></svg></button>
+    <button id="importBtn" class="ibtn" title="Import backup" aria-label="Import backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"></path></svg></button>
+    <input id="importFile" type="file" accept="application/json" hidden="">
   </div>
 </div>
 
@@ -244,10 +250,10 @@ input:not([type='file']),select{height:var(--ctl)}
   <p>Select the folder that contains <b>data</b>, <b>images</b> and <b>videos</b>. Your browser may say “upload”, but nothing leaves your computer; the files are only read here.</p>
   <button id="pickBtn" class="primary">Choose folder</button>
   <div id="err" class="err" role="alert"></div>
-  <input id="dirInput" type="file" webkitdirectory multiple hidden>
+  <input id="dirInput" type="file" webkitdirectory="" multiple="" hidden="">
 </div>
 
-<div id="app" class="layout" hidden>
+<div id="app" class="layout" hidden="">
   <section id="detail" class="panel"></section>
   <aside class="panel">
     <div class="ahead"><b>Library</b><button id="addBtn" class="link">+ Custom exercise</button></div>
@@ -259,12 +265,12 @@ input:not([type='file']),select{height:var(--ctl)}
     </div>
     <p id="count" class="count"></p>
     <div id="list"></div>
-    <button id="more" class="link" hidden>Show more</button>
+    <button id="more" class="link" hidden="">Show more</button>
   </aside>
 </div>
 </div>
 
-<div id="pageSt" hidden>
+<div id="pageSt" hidden="">
   <div class="layout">
     <section id="stDetail" class="panel det"></section>
     <aside class="panel">
@@ -275,34 +281,36 @@ input:not([type='file']),select{height:var(--ctl)}
     </aside>
   </div>
 </div>
-<div id='pagePl' hidden>
-  <div class='fbar'>
-    <input id='plQ' type='search' placeholder='Search plans' aria-label='Search plans'>
-    <select id='plFDays' aria-label='Training days'></select>
-    <select id='plFMuscle' aria-label='Muscle'></select>
-    <select id='plFBody' aria-label='Body part'></select>
-    <select id='plFLevel' aria-label='Level'></select>
-    <select id='plFGoal' aria-label='Goal'></select>
+<div id="pagePl" hidden="">
+  <div class="fbar">
+    <input id="plQ" type="search" placeholder="Search plans" aria-label="Search plans">
+    <select id="plFDays" aria-label="Training days"></select>
+    <select id="plFMuscle" aria-label="Muscle"></select>
+    <select id="plFBody" aria-label="Body part"></select>
+    <select id="plFLevel" aria-label="Level"></select>
+    <select id="plFGoal" aria-label="Goal"></select>
   </div>
-  <div class='layout'>
-    <section id='plEditor' class='panel det'></section>
-    <aside class='panel'>
-      <div class='ahead'><b>Plans</b><button id='plNew' class='link'>+ New plan</button></div>
-      <p id='plCount' class='count'></p>
-      <div id='plList'></div>
+  <div class="layout">
+    <section id="plEditor" class="panel det"></section>
+    <aside class="panel">
+      <div class="ahead"><b>Plans</b><button id="plNew" class="link">+ New plan</button></div>
+      <p id="plCount" class="count"></p>
+      <div id="plList"></div>
     </aside>
   </div>
 </div>
-<footer>Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.1. Exercise images © Gym visual (gymvisual.com), non-commercial use only. Body figures from MuscleMap (MIT license). Avatars: <a href="https://www.vecteezy.com" target="_blank" rel="noopener">Vecteezy.com</a>.</footer>
 
-<dialog id='pick'>
-  <div class='dlg'>
-    <h2>Add exercise to day <span id='pickDay'></span></h2>
-    <div class='clr'><input id='pQ' type='text' autocomplete='off' placeholder='Search exercises' aria-label='Search exercises'><button id='pX' type='button' class='x' aria-label='Clear search' hidden>✕</button></div>
-    <div class='three'><select id='pE' aria-label='Equipment'></select><select id='pT' aria-label='Muscle'></select><select id='pB' aria-label='Body part'></select></div>
-    <div id='pList' class='plist'></div>
-    <p id='pMsg' class='count' role='status'></p>
-    <div class='acts'><button id='pClose' class='primary'>Done</button></div>
+<div id="toast" class="toast" role="status" hidden=""></div>
+
+<dialog id="pick">
+  <div class="dlg">
+    <h2>Add exercise to day <span id="pickDay"></span></h2>
+    <div class="clr"><input id="pQ" type="text" autocomplete="off" placeholder="Search exercises" aria-label="Search exercises"><button id="pX" type="button" class="x" aria-label="Clear search" hidden="">✕</button></div>
+    <div class="three"><select id="pE" aria-label="Equipment"></select><select id="pT" aria-label="Muscle"></select><select id="pB" aria-label="Body part"></select></div>
+    <div id="pList" class="plist"></div>
+    <p id="pMsg" class="count" role="status"></p>
+    <div class="acts"><button id="pClose" class="primary">Done</button></div>
   </div>
 </dialog>
 
@@ -322,7 +330,7 @@ input:not([type='file']),select{height:var(--ctl)}
     <label>Instructions<textarea id="eInstr" rows="5"></textarea></label>
     <datalist id="bodyList"></datalist><datalist id="targetList"></datalist><datalist id="equipList"></datalist>
     <div class="acts">
-      <button id="delBtn" class="danger left" hidden></button>
+      <button id="delBtn" class="danger left" hidden=""></button>
       <button id="cancelBtn">Cancel</button>
       <button id="saveBtn" class="primary">Save changes</button>
     </div>
@@ -336,6 +344,8 @@ const BODY_BOX = {"MALE": {"FRONT": [200, 69, 820, 1420], "BACK": [210, 64, 812,
 const AVATAR = {"Male": "data:image/webp;base64,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", "Female": "data:image/webp;base64,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"};
 </script>
 <script>
+const SRC_CLEAN = (() => { const c = document.documentElement.cloneNode(true); c.querySelectorAll('head script, meta[http-equiv], base').forEach(n => n.remove()); return '<!doctype html>\n' + c.outerHTML; })();
+const APP_VERSION = document.querySelector('meta[name="app-version"]').content;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let files = {}, urls = {}, base = [], all = [], shown = 120, selected = null, editing = null, newImage = null;
@@ -581,10 +591,10 @@ $('#stQ').addEventListener('input', renderStudents);
 (async () => {
   const s = await load();
   if (s) {
-    state = { over: s.over || {}, custom: s.custom || {}, students: s.students || {}, plans: {}, planLib: s.planLib || {}, sex: s.sex };
+    state = { over: s.over || {}, custom: s.custom || {}, students: s.students || {}, plans: {}, planLib: s.planLib || {}, sex: s.sex, savedVersion: s.savedVersion };
     if (!s.planLib && s.plans) { let i = 0; for (const [k, lp] of Object.entries(s.plans)) if (lp.routines && lp.routines.some(r => r.length)) { const id = 'm' + k; state.planLib[id] = { id, name: 'Imported plan ' + (++i), days: lp.days || 3, level: 'Beginner', goal: 'General fitness', titles: lp.titles || [], routines: lp.routines }; } }
   }
-  renderStudents(); renderStudentForm();
+  updateGh(); renderStudents(); renderStudentForm();
 })();
 /* ---------- plan page ---------- */
 const MUSCLES = new Set(['abs', 'abductors', 'adductors', 'biceps', 'calves', 'delts', 'forearms', 'glutes', 'hamstrings', 'lats', 'levator scapulae', 'pectorals', 'quads', 'serratus anterior', 'spine', 'traps', 'triceps', 'upper back']);
@@ -804,6 +814,26 @@ document.addEventListener('click', ev => {
   v = Math.round(Math.min(max, Math.max(min, v)) * 100) / 100;
   inp.value = v; inp.dispatchEvent(new Event('input', { bubbles: true }));
 });
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 9000); }
+function updateGh() {
+  const b = $('#ghBtn'), fresh = state.savedVersion !== APP_VERSION;
+  b.dataset.new = String(fresh);
+  b.title = fresh ? `New version ${APP_VERSION} not saved yet. Click to save a copy for GitHub` : `Version ${APP_VERSION} saved. Click to save the file again`;
+  b.setAttribute('aria-label', b.title);
+}
+async function saveVersion() {
+  const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+  if (!dl) { toast('Saving files is not available in this view. Download the file from the chat instead.'); return; }
+  if (SRC_CLEAN.length < 200000) { toast('The page source looks incomplete, so nothing was saved. Download the file from the chat instead.'); return; }
+  try {
+    await dl.save({ filename: `trainer-app-v${APP_VERSION}.html`, data: SRC_CLEAN });
+    state.savedVersion = APP_VERSION; await save(); updateGh();
+    toast(`Saved trainer-app-v${APP_VERSION}.html. Now double-click save-to-github.command to push it to GitHub.`);
+  } catch (e) { if (!e || e.code !== 'declined') toast('Could not save the file' + (e && e.code ? ' (' + e.code + ')' : '') + '.'); }
+}
+$('#ghBtn').onclick = saveVersion;
+updateGh();
 function enhanceSearch(el) {
   el.type = 'text'; el.autocomplete = 'off';
   const wrap = document.createElement('div'); wrap.className = 'clr';
@@ -816,6 +846,4 @@ function enhanceSearch(el) {
 $('#pQ').addEventListener('input', () => { $('#pX').hidden = !$('#pQ').value; renderPick(); });
 for (const id of ['#pE', '#pT', '#pB']) $(id).addEventListener('change', renderPick);
 $('#pX').onclick = () => { $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pQ').focus(); }; $('#pClose').onclick = () => $('#pick').close();
-</script>
-</body>
-</html>
+</script></body></html>
