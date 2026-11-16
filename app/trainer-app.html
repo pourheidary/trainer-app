@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.18">
-<meta name="app-notes" content="Dataset folder picker only inside Claude; the website reads the data folders next to the app">
+<meta name="app-version" content="1.19">
+<meta name="app-notes" content="Export backup works inside Claude (uses the Claude save dialog)">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -366,7 +366,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.18. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.19. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -587,8 +587,19 @@ $('#more').onclick = () => { shown += 120; render(); };
 for (const id of ['#q', '#fBody', '#fTarget', '#fEquip']) $(id).addEventListener('input', () => { shown = 120; render(); });
 $('#fImg').onchange = async e => { const f = e.target.files[0]; if (!f) return;
   try { newImage = await shrink(f); $('#preview').src = newImage; } catch (_) { alert('That file could not be read as an image.'); } };
-$('#exportBtn').onclick = () => { const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(state)], { type: 'application/json' })); a.download = 'exercise-edits.json'; a.click(); };
+$('#exportBtn').onclick = async () => {
+  const text = JSON.stringify(state);
+  if (IN_CLAUDE) {
+    try {
+      const dl = await window.claude.use('downloads');
+      await dl.save({ filename: 'exercise-edits.json', data: text });
+      toast('Backup saved: exercise-edits.json');
+    } catch (e) { if (!e || e.code !== 'declined') toast('Could not save the backup' + (e && e.code ? ' (' + e.code + ')' : '') + '.'); }
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = 'exercise-edits.json'; a.click();
+};
 $('#importBtn').onclick = () => $('#importFile').click();
 $('#importFile').onchange = async e => {
   try { const d = JSON.parse(await e.target.files[0].text());
