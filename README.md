@@ -20,7 +20,7 @@ Student data is deliberately NOT part of this repository.
 ## What is not in this repository
 
 * The exercise dataset: https://github.com/hasaneyldrm/exercises-dataset (1324 exercises).
-  Its images and GIFs are (c) Gym visual and licensed for non-commercial use only.
+  Its images and GIFs are (c) Gym visual.
   Download it separately; the app reads it from the folder you pick.
 * The original Vecteezy download (EPS/JPG). Only the two cropped round avatars are included (`assets/avatars`).
 
@@ -47,4 +47,4 @@ Student data is deliberately NOT part of this repository.
 * Body figures and muscle outlines: MuscleMap (MIT), see `third_party/`.
 * Avatars: Vecteezy.com. The free license requires attribution, which the app footer provides.
   Check `third_party/Vecteezy-License-Information.pdf` for the terms of your license.
-* Exercise images: (c) Gym visual, non-commercial use only (see above).
+* Exercise images: (c) Gym visual (see above).
