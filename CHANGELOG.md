@@ -200,6 +200,18 @@ date, age and blood type in one row.
 * The GitHub button (Claude view only) no longer downloads a file. It sends the ticked students and plans to the repository file `app/data/defaults.json` (a commit on main). The first time it asks for a GitHub token and keeps it only in that browser; a red dot shows when the ticks changed since the last send.
 * The website (Cloudflare) reads `data/defaults.json` when it opens and shows those students and plans in any browser that has not seen them before. Ticks and the GitHub button are not shown on the website.
 
+## v1.36 - Transparent larger icon, tick in the corner, defaults saved inside Claude
+* Site icon: the white background is gone (transparent PNG, 128 px) and the picture fills the whole square. The phone home-screen icon keeps a white background, because iPhones turn transparent icons black.
+* The default tick on plan cards now sits at the very top-left corner of each collapsed card.
+* The GitHub button no longer tries to reach GitHub (the Claude page blocks outside connections: error NetworkError when attempting to fetch resource). It now saves the ticked students and plans into the page's own database (collections dfStudents and dfPlans, one document per item; unticked ones are removed). The token window was removed.
+* Claude reads those saved defaults and writes them to `app/data/defaults.json` on GitHub when asked to push, so the website shows them.
+
+## v1.37 - Plan tick higher
+* The default tick on collapsed plan cards moved a few pixels up and left, into the very corner of the card.
+
+## v1.38 - Plan tick 3 pixels higher
+* The default tick on collapsed plan cards moved 3 pixels further up.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).
