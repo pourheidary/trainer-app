@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.30">
-<meta name="app-notes" content="Edit program is now a blue pencil circle next to the red remove circle on the first line of each program card">
+<meta name="app-version" content="1.31">
+<meta name="app-notes" content="Clicking outside the student program editor popup closes it">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -414,7 +414,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.30. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.31. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -934,6 +934,9 @@ function closeAsgPlan() {
   if ($('#plDlg').open) $('#plDlg').close();
   renderEditor(); renderPlanList(); renderStudents(); renderStudentForm();
 }
+let plDlgDown = false;
+$('#plDlg').addEventListener('pointerdown', ev => { plDlgDown = ev.target === $('#plDlg'); });
+$('#plDlg').addEventListener('click', ev => { if (ev.target === $('#plDlg') && plDlgDown) closeAsgPlan(); plDlgDown = false; });
 $('#plDlg').addEventListener('close', closeAsgPlan); $('#plDlgClose').onclick = closeAsgPlan;
 const planSex = p => p.sex === 'FEMALE' ? 'FEMALE' : p.sex === 'MALE' ? 'MALE' : (state.sex === 'FEMALE' ? 'FEMALE' : 'MALE');
 const saveSoon = () => { clearTimeout(saveT); saveT = setTimeout(save, 400); };
