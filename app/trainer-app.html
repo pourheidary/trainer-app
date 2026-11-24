@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.25">
-<meta name="app-notes" content="Program history cards: numbered newest first, plan picture with three lines, follow-up length in orange after the name, body measurements under the picture, days until follow-up on the last line; "(auto)" removed from Age">
+<meta name="app-version" content="1.26">
+<meta name="app-notes" content="Follow-up length (orange) now sits after the date on the first line; program numbers and exercise counts on day tabs use the same grey number badge as the exercise rows"(auto)" removed from Age">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -176,7 +176,8 @@ input.ro,input.ro:focus{background:var(--soft);color:var(--mute);border-style:da
 .daytabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin:4px 0 0}
 .daytabs button{border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:var(--soft);color:var(--mute);padding:8px 14px;margin-bottom:-1px}
 .daytabs button[aria-selected='true']{background:var(--surface);color:var(--ink);font-weight:600;border-color:var(--line);border-top:3px solid var(--accent)}
-.cnt{display:inline-block;min-width:20px;margin-left:8px;padding:0 6px;border-radius:999px;background:var(--line);color:var(--ink);font-size:.78rem;font-weight:600;text-align:center}
+.cnt{margin-left:8px;vertical-align:middle}
+.daytabs button[aria-selected='false'] .cnt{background:var(--line);color:var(--ink)}
 .tabpanel{border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:16px}
 .dsum{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
 .dsum .txt{flex:1 1 220px;min-width:0}
@@ -283,7 +284,7 @@ dialog{max-height:92vh;overflow:auto}
 .phd{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
 .phd .mh{margin:0}
 .acard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
-.ach{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.ach{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .acs{color:var(--mute);font-size:.9rem;margin:4px 0}
 .acn{font-size:.9rem;white-space:pre-wrap;margin:6px 0}
 .acb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -396,7 +397,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.25. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.26. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -700,8 +701,8 @@ function asgCard(a, latest, n) {
   const bits = [a.height && `${a.height} cm`, a.weight && `${a.weight} kg`, bmiOf(a.height, a.weight) && `BMI ${bmiText(a.height, a.weight)}`, a.bodyType].filter(Boolean).join(' · ');
   const name = esc(p ? p.name : (a.planName || 'No program')), durHtml = dur ? ` <em class='adur'>(${esc(dur)})</em>` : '';
   const lines = p ? `<small>${p.days} day${p.days === 1 ? '' : 's'} · ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small>` : '';
-  return `<div class='acard'><div class='ach'><b>${n}- ${esc(a.date || 'No date')}</b></div>
-    <div class='aplan'>${p ? thumb(analyse(activeRows(p)), planSex(p)) : ''}<span><b>${name}${durHtml}</b>${lines}</span></div>
+  return `<div class='acard'><div class='ach'><span class='num'>${n}</span><b>${esc(a.date || 'No date')}</b>${durHtml}</div>
+    <div class='aplan'>${p ? thumb(analyse(activeRows(p)), planSex(p)) : ''}<span><b>${name}</b>${lines}</span></div>
     ${bits ? `<div class='acs'>${esc(bits)}</div>` : ''}
     ${a.notes ? `<div class='acn'>${esc(a.notes)}</div>` : ''}
     ${f ? `<div class='fu' data-st='${f.st}'>${esc(f.text)}</div>` : ''}
@@ -1031,7 +1032,7 @@ function renderEditor() {
 }
 function renderTabs() {
   const p = getPlan(); if (!p) return;
-  $('#plTabs').innerHTML = Array.from({ length: p.days }, (_, i) => `<button data-d='${i}' role='tab' aria-selected='${i === plDay}'>Day ${i + 1}${p.titles[i] ? ': ' + esc(p.titles[i]) : ''}<span class='cnt'>${p.routines[i].length}</span></button>`).join('');
+  $('#plTabs').innerHTML = Array.from({ length: p.days }, (_, i) => `<button data-d='${i}' role='tab' aria-selected='${i === plDay}'>Day ${i + 1}${p.titles[i] ? ': ' + esc(p.titles[i]) : ''}<span class='num cnt'>${p.routines[i].length}</span></button>`).join('');
 }
 function renderSummary() {
   const p = getPlan(), box = $('#plSum'); if (!p || !box) return;
