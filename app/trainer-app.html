@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.21">
-<meta name="app-notes" content="Student page like the plan page: name box on top with a delete icon, instant saving, birth date, age and blood type in one row">
+<meta name="app-version" content="1.23">
+<meta name="app-notes" content="Delete buttons work again (own confirmation box), new plans and students default to male, student page spacing fixed, program picker is a dropdown, assigned programs can be deleted">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -134,6 +134,22 @@ footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
 .bmi{padding:9px 0;color:var(--ink);font-weight:600}
 .dateRow{display:flex;gap:8px}
 .plhead2{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.plhead2.nw{flex-wrap:nowrap}.plhead2.nw .plname{flex:1 1 0;min-width:0}.plhead2.nw>:not(.plname){flex:none}
+.pick{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:4px;margin:6px 0 12px}
+.pick .pitem[data-sel='true']{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.pick .item{cursor:pointer}
+.cfmsg{margin:0;line-height:1.5}
+#stDetail{display:grid;gap:14px;align-content:start}
+#stDetail .empty{align-self:stretch}
+#stDetail .plhead2,#stDetail .banner{margin:0}
+#stDetail label{display:grid;gap:4px;font-size:.9rem;color:var(--mute)}
+#stDetail .progs{margin-top:12px}
+.pickbtn,.pickbtn:hover{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);padding:6px 10px;min-height:56px;color:var(--ink)}
+.pickbtn b{display:block;font-weight:500}.pickbtn small{display:block;color:var(--mute)}
+.pickbtn .cv{margin-left:auto}
+.pickbtn[aria-expanded='true'] .cv svg{transform:rotate(180deg)}
+.pickbtn>span:not(.pthumb):not(.cv){min-width:0;flex:1 1 auto}
+.pick{margin-top:6px}
 .plname{flex:1 1 220px;width:auto;font-size:1.25rem;font-weight:600}
 .fl{display:grid;gap:4px;font-size:.9rem;color:var(--mute);margin-bottom:12px}
 #plEditor .two{margin-bottom:0}
@@ -366,7 +382,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.21. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.23. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -380,6 +396,14 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     <h2 id='asgTitle'>Assign program</h2>
     <div id='asgBody' class='sform'></div>
     <div class='acts'><button id='asgDel' class='danger left' hidden>Delete</button><button id='asgCancel'>Cancel</button><button id='asgSave' class='primary'>Save</button></div>
+  </div>
+</dialog>
+
+<dialog id='cfDlg'>
+  <div class='dlg'>
+    <h2 id='cfTitle'>Are you sure?</h2>
+    <p id='cfMsg' class='cfmsg'></p>
+    <div class='acts'><button id='cfNo' type='button'>Cancel</button><button id='cfYes' type='button' class='primary'>Delete</button></div>
   </div>
 </dialog>
 
@@ -563,7 +587,7 @@ async function saveEdit() {
 }
 async function removeEdit() {
   const e = all.find(x => x.id === editing);
-  if (e.custom) { if (!confirm('Delete this exercise?')) return; delete state.custom[e.id]; selected = null; } else delete state.over[e.id];
+  if (e.custom) { if (!await askConfirm(`Delete the exercise \u201c${e.name}\u201d?`, 'Delete exercise')) return; delete state.custom[e.id]; selected = null; } else delete state.over[e.id];
   await save(); merge(); fillLists(); render(); renderDetail(); $('#dlg').close();
 }
 function shrink(file) {
@@ -643,9 +667,10 @@ function normStudent(s) {
     if (s.height || s.weight || s.bodyType || s.dur || s.notes)
       s.assignments.push({ id: 'a' + Date.now().toString(36), date: s.start || iso(today()), plan: null, planName: '', height: s.height || '', weight: s.weight || '', bodyType: s.bodyType || '', dur: s.dur || '', notes: s.notes || '' });
   }
+  if (s.height === undefined && s.weight === undefined && s.bodyType === undefined) { const l = latestAsg(s) || {}; s.height = l.height || ''; s.weight = l.weight || ''; s.bodyType = l.bodyType || ''; }
   return s;
 }
-const brief = s => { const a = latestAsg(s), age = ageOf(s.birth) || s.age || ''; return [age && `${age} y`, a && a.height && `${a.height} cm`, a && a.weight && `${a.weight} kg`].filter(Boolean).join(' \u00b7 '); };
+const brief = s => { const age = ageOf(s.birth) || s.age || '', h = s.height || '', w = s.weight || ''; return [age && `${age} y`, h && `${h} cm`, w && `${w} kg`].filter(Boolean).join(' \u00b7 '); };
 const opts = (list, val, ph) => `<option value=''>${ph}</option>` + list.map(v => { const [value, label] = Array.isArray(v) ? v : [v, v]; return `<option value='${esc(value)}' ${String(value) === String(val) ? 'selected' : ''}>${esc(label)}</option>`; }).join('');
 function renderStudents() {
   const q = $('#stQ').value.trim(), pr = { late: 0, soon: 1 };
@@ -663,7 +688,7 @@ function asgCard(a, latest) {
     ${p ? `<div class='acs'>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)} \u00b7 ${esc(p.goal)}</div>` : ''}
     ${bits ? `<div class='acs'>${esc(bits)}</div>` : ''}
     ${a.notes ? `<div class='acn'>${esc(a.notes)}</div>` : ''}
-    <div class='acb'><button type='button' data-act='asg-edit' data-aid='${esc(a.id)}'>Edit details</button><button type='button' data-act='asg-plan' data-aid='${esc(a.id)}' ${p ? '' : 'disabled'}>Edit program</button></div></div>`;
+    <div class='acb'><button type='button' data-act='asg-edit' data-aid='${esc(a.id)}'>Edit details</button><button type='button' data-act='asg-plan' data-aid='${esc(a.id)}' ${p ? '' : 'disabled'}>Edit program</button><button type='button' class='danger' data-act='asg-del' data-aid='${esc(a.id)}'>Delete</button></div></div>`;
 }
 function renderStudentForm() {
   const box = $('#stDetail');
@@ -671,7 +696,7 @@ function renderStudentForm() {
   if (!s) { box.innerHTML = `<div class='empty'><div><b>Select a student</b>Choose a student from the list, or add a new one.</div></div>`; return; }
   const f = followUpOf(s), age = ageOf(s.birth) || (s.age ? `${s.age} (old record)` : '');
   const hist = [...(s.assignments || [])].map((a, i) => [a, i]).sort((x, y) => (y[0].date || '').localeCompare(x[0].date || '') || y[1] - x[1]).map(x => x[0]), last = latestAsg(s);
-  box.innerHTML = `<div class='plhead2'>
+  box.innerHTML = `<div class='plhead2 nw'>
       <input id='sName' class='plname' value='${esc(s.name)}' placeholder='Student name' aria-label='Student name' autocomplete='off'>
       <div id='sSex' class='seg sx' role='group' aria-label='Sex'>
         <button type='button' data-sx='Male' aria-pressed='${s.sex !== 'Female'}' aria-label='Male' title='Male'>${MARS}</button>
@@ -685,26 +710,52 @@ function renderStudentForm() {
       <div class='fld'><span>Age</span><output id='sAge' class='bmi'>${esc(age ? String(age) : '\u2014')}</output></div>
       <label>Blood type<select id='sBlood'>${opts(BLOOD, s.blood, 'Unknown')}</select></label>
     </div>
+    <div class='three'>
+      <div class='fld'><span>Height (cm)</span>${stepper('sH', s.height, 50, 260, 1, "aria-label='Height in centimeters'")}</div>
+      <div class='fld'><span>Weight (kg)</span>${stepper('sW', s.weight, 20, 400, 0.5, "aria-label='Weight in kilograms'")}</div>
+      <div class='fld'><span>BMI</span><output id='sBmi' class='bmi'>${esc(bmiText(s.height, s.weight))}</output></div>
+    </div>
+    <label>Body type<select id='sBody'>${opts(BODY_TYPES, s.bodyType, 'Not set')}</select></label>
     <div class='progs'><div class='phd'><h3 class='mh'>Programs</h3><button id='asgNew' class='primary'>Assign program</button></div>
       ${hist.map(a => asgCard(a, a === last)).join('') || `<p class='count'>No program assigned yet.</p>`}</div>`;
 }
 async function deleteStudent() {
-  if (!confirm('Delete this student and all of their programs?')) return;
+  const s0 = state.students[stSel]; if (!s0) return;
+  if (!await askConfirm(`Delete \u201c${s0.name || 'this student'}\u201d and all of their programs? This cannot be undone.`, 'Delete student')) return;
   if (plAssign && plAssign.sid === stSel) plAssign = null;
   delete state.students[stSel]; stSel = null;
   await save(); renderStudents(); renderStudentForm();
 }
+function askConfirm(msg, yes = 'Delete', title = 'Are you sure?') {
+  return new Promise(res => {
+    const d = $('#cfDlg'); let done = false;
+    const fin = v => { if (done) return; done = true; d.removeEventListener('close', onc); if (d.open) d.close(); res(v); };
+    const onc = () => fin(false);
+    $('#cfTitle').textContent = title; $('#cfMsg').textContent = msg; $('#cfYes').textContent = yes;
+    $('#cfYes').onclick = () => fin(true); $('#cfNo').onclick = () => fin(false);
+    d.addEventListener('close', onc); d.showModal(); $('#cfNo').focus();
+  });
+}
 let asgEdit = null;
+let asgPick = '', asgOpen = false;
+function pickHTML(s) {
+  const want = s.sex === 'Female' ? 'FEMALE' : 'MALE';
+  const plans = Object.values(state.planLib).filter(p => planSex(p) === want).sort((x, y) => (x.name || '').localeCompare(y.name || ''));
+  const cur = plans.find(p => p.id === asgPick);
+  const row = (p, sel, btn) => {
+    const inner = p ? `${thumb(analyse(activeRows(p)), planSex(p))}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} · ${esc(p.level)} · ${esc(p.goal)}</small></span>`
+      : `<span><b>No program</b><small>Record only, no plan attached</small></span>`;
+    return btn ? inner : `<div class='pitem' data-sel='${sel}'><button type='button' class='item' data-pid='${p ? esc(p.id) : ''}'>${inner}</button></div>`;
+  };
+  const chev = `<span class='cv'>${ICON("<path d='m6 9 6 6 6-6'/>")}</span>`;
+  return `<button type='button' id='aPickBtn' class='pickbtn' aria-expanded='${asgOpen}' aria-haspopup='listbox'>${row(cur || null, false, true)}${chev}</button>`
+    + (asgOpen ? `<div class='pick'>${row(null, asgPick === '', false)}${plans.map(p => row(p, asgPick === p.id, false)).join('')}${plans.length ? '' : `<p class='count'>No ${want === 'FEMALE' ? 'women’s' : 'men’s'} plans in the library yet.</p>`}</div>` : '');
+}
 function asgForm(a, isNew) {
-  const plans = Object.values(state.planLib).sort((x, y) => (x.name || '').localeCompare(y.name || ''));
-  return `${isNew ? `<label>Program<select id='aPlan'><option value=''>No program (record measurements only)</option>${plans.map(p => `<option value='${esc(p.id)}'>${esc(p.name)} (${p.days}d, ${esc(p.level)})</option>`).join('')}</select></label>`
-      : `<div class='fld'><span>Program</span><output class='bmi'>${esc(a.plan ? a.plan.name : 'No program')}</output></div>`}
-    <div class='three'>
-      <div class='fld'><span>Height (cm)</span>${stepper('aH', a.height, 50, 260, 1, "aria-label='Height in centimeters'")}</div>
-      <div class='fld'><span>Weight (kg)</span>${stepper('aW', a.weight, 20, 400, 0.5, "aria-label='Weight in kilograms'")}</div>
-      <div class='fld'><span>BMI</span><output id='aBmi' class='bmi'>${esc(bmiText(a.height, a.weight))}</output></div>
-    </div>
-    <label>Body type<select id='aBody'>${opts(BODY_TYPES, a.bodyType, 'Not set')}</select></label>
+  const s = state.students[stSel];
+  return `${isNew ? `<div class='fld'><span>Program (${s.sex === 'Female' ? 'women’s' : 'men’s'} plans)</span></div><div id='aPick'>${pickHTML(s)}</div>`
+      : `<div class='fld'><span>Program</span><output class='bmi'>${esc(a.plan ? a.plan.name : 'No program')}</output></div>
+         <div class='fld'><span>Measurements at that time</span><output class='bmi'>${esc([a.height && a.height + ' cm', a.weight && a.weight + ' kg', a.bodyType].filter(Boolean).join(' · ') || '—')}</output></div>`}
     <div class='two'>
       <label>Follow-up after<select id='aDur'>${opts(DURS, a.dur, 'No reminder')}</select></label>
       <label>Program given on<span class='dateRow'><input id='aDate' type='date' value='${esc(a.date || '')}'><button id='aToday' type='button'>Today</button></span></label>
@@ -713,9 +764,9 @@ function asgForm(a, isNew) {
 }
 function openAsg(aid) {
   const s = state.students[stSel]; if (!s) return;
-  const isNew = !aid; asgEdit = aid || null;
+  const isNew = !aid; asgEdit = aid || null; asgPick = ''; asgOpen = false;
   let a;
-  if (isNew) { const l = latestAsg(s) || {}; a = { height: l.height || '', weight: l.weight || '', bodyType: l.bodyType || '', dur: l.dur || '', date: iso(today()), notes: '' }; }
+  if (isNew) { const l = latestAsg(s) || {}; a = { dur: l.dur || '', date: iso(today()), notes: '' }; }
   else a = s.assignments.find(x => x.id === aid);
   if (!a) return;
   $('#asgTitle').textContent = isNew ? `Assign a program to ${s.name}` : `Program details for ${s.name}`;
@@ -725,28 +776,31 @@ function openAsg(aid) {
 }
 async function saveAsg() {
   const s = state.students[stSel]; if (!s) return;
-  const vals = { height: $('#aH').value, weight: $('#aW').value, bodyType: $('#aBody').value, dur: $('#aDur').value ? +$('#aDur').value : '', date: $('#aDate').value || iso(today()), notes: $('#aNotes').value.trim() };
+  const vals = { dur: $('#aDur').value ? +$('#aDur').value : '', date: $('#aDate').value || iso(today()), notes: $('#aNotes').value.trim() };
   if (asgEdit) Object.assign(s.assignments.find(x => x.id === asgEdit), vals);
   else {
-    const pid = $('#aPlan').value, id = 'a' + Date.now().toString(36);
+    const pid = asgPick, id = 'a' + Date.now().toString(36);
     const plan = pid && state.planLib[pid] ? JSON.parse(JSON.stringify(state.planLib[pid])) : null;
     if (plan) plan.id = id;
-    s.assignments.push({ id, planId: pid || '', planName: plan ? plan.name : '', plan, ...vals });
+    s.assignments.push({ id, planId: pid || '', planName: plan ? plan.name : '', plan, height: s.height || '', weight: s.weight || '', bodyType: s.bodyType || '', ...vals });
   }
   await save(); $('#asgDlg').close(); renderStudents(); renderStudentForm();
 }
-async function deleteAsg() {
-  if (!asgEdit || !confirm('Delete this program record? This cannot be undone.')) return;
-  const s = state.students[stSel];
-  if (plAssign && plAssign.aid === asgEdit) plAssign = null;
-  s.assignments = s.assignments.filter(x => x.id !== asgEdit);
-  await save(); $('#asgDlg').close(); renderStudents(); renderStudentForm();
+async function deleteAsg(aid) {
+  aid = typeof aid === 'string' ? aid : asgEdit;
+  const s = state.students[stSel], a = s && aid && s.assignments.find(x => x.id === aid); if (!a) return;
+  if (!await askConfirm(`Delete the program \u201c${a.plan ? a.plan.name : (a.planName || 'No program')}\u201d given on ${a.date || 'an unknown date'} to ${s.name || 'this student'}? This cannot be undone.`, 'Delete program')) return;
+  if (plAssign && plAssign.aid === aid) plAssign = null;
+  s.assignments = s.assignments.filter(x => x.id !== aid);
+  await save(); if ($('#asgDlg').open) $('#asgDlg').close(); renderStudents(); renderStudentForm();
 }
 $('#stDetail').addEventListener('input', ev => {
   const s = state.students[stSel], id = ev.target.id; if (!s) return;
   if (id === 'sName') { s.name = ev.target.value; saveSoon(); renderStudents(); }
   else if (id === 'sBirth') { s.birth = ev.target.value; $('#sAge').textContent = ageOf(s.birth) || '\u2014'; saveSoon(); renderStudents(); }
   else if (id === 'sBlood') { s.blood = ev.target.value; saveSoon(); }
+  else if (id === 'sH' || id === 'sW') { s[id === 'sH' ? 'height' : 'weight'] = ev.target.value; $('#sBmi').textContent = bmiText(s.height, s.weight); saveSoon(); renderStudents(); }
+  else if (id === 'sBody') { s.bodyType = ev.target.value; saveSoon(); }
 });
 $('#stDetail').addEventListener('click', ev => {
   const s = state.students[stSel]; if (!s) return;
@@ -756,11 +810,11 @@ $('#stDetail').addEventListener('click', ev => {
   if (b.id === 'sDel') { deleteStudent(); return; }
   if (b.id === 'asgNew') { openAsg(null); return; }
   if (b.dataset.act === 'asg-edit') { openAsg(b.dataset.aid); return; }
+  if (b.dataset.act === 'asg-del') { deleteAsg(b.dataset.aid); return; }
   if (b.dataset.act === 'asg-plan') { plAssign = { sid: stSel, aid: b.dataset.aid }; plSel = null; plDay = 0; showPage('pl'); }
 });
-$('#asgDlg').addEventListener('input', ev => { if (ev.target.id === 'aH' || ev.target.id === 'aW') $('#aBmi').textContent = bmiText($('#aH').value, $('#aW').value); });
-$('#asgDlg').addEventListener('click', ev => { if (ev.target.id === 'aToday') $('#aDate').value = iso(today()); });
-$('#asgSave').onclick = saveAsg; $('#asgCancel').onclick = () => $('#asgDlg').close(); $('#asgDel').onclick = deleteAsg;
+$('#asgDlg').addEventListener('click', ev => { const pk = ev.target.closest('[data-pid]'); if (pk) { asgPick = pk.dataset.pid; asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.closest('#aPickBtn')) { asgOpen = !asgOpen; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.id === 'aToday') $('#aDate').value = iso(today()); });
+$('#asgSave').onclick = saveAsg; $('#asgCancel').onclick = () => $('#asgDlg').close(); $('#asgDel').onclick = () => deleteAsg();
 function showPage(p) {
   $('#pageEx').hidden = p !== 'ex'; $('#pageSt').hidden = p !== 'st'; $('#pagePl').hidden = p !== 'pl'; if (p === 'pl') renderPlan();
   for (const [k, id] of [['ex', '#tabEx'], ['st', '#tabSt'], ['pl', '#tabPl']]) $(id).toggleAttribute('aria-current', p === k);
@@ -1005,7 +1059,7 @@ function renderPick() {
 $('#tabPl').onclick = () => showPage('pl');
 $('#plNew').onclick = () => {
   const id = 'p' + Date.now();
-  state.planLib[id] = { id, name: 'New plan', days: 3, level: 'Beginner', goal: 'Muscle building', titles: [], routines: Array.from({ length: 7 }, () => []) };
+  state.planLib[id] = { id, name: 'New plan', days: 3, level: 'Beginner', goal: 'Muscle building', sex: 'MALE', titles: [], routines: Array.from({ length: 7 }, () => []) };
   plSel = id; plAssign = null; plDay = 0; saveSoon();
   for (const sid of ['#plFDays', '#plFLevel', '#plFGoal', '#plFMuscle', '#plFBody']) $(sid).value = '';
   $('#plQ').value = ''; $('#plQ').dispatchEvent(new Event('input', { bubbles: true }));
@@ -1040,7 +1094,7 @@ $('#plEditor').addEventListener('click', ev => {
     const id = 'p' + Date.now(), copy = JSON.parse(JSON.stringify(p)); copy.id = id; copy.name = (p.name || 'Plan') + ' (copy)';
     state.planLib[id] = copy; plSel = id; saveSoon(); renderPlan(); return;
   }
-  if (b.id === 'plDel') { if (!confirm('Delete this plan?')) return; delete state.planLib[plSel]; plSel = null; saveSoon(); renderPlan(); return; }
+  if (b.id === 'plDel') { const id = plSel; askConfirm(`Delete the plan \u201c${p.name || 'Untitled plan'}\u201d from the library? Programs already given to students keep their own copy.`, 'Delete plan').then(ok => { if (!ok) return; delete state.planLib[id]; if (plSel === id) plSel = null; saveSoon(); renderPlan(); }); return; }
   const r = p.routines[plDay], i = +b.dataset.i, a = b.dataset.act;
   if (a === 'del') r.splice(i, 1);
   else if (a === 'up' && i > 0) { const t = r[i - 1]; r[i - 1] = r[i]; r[i] = t; }
