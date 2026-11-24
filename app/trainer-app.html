@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.23">
-<meta name="app-notes" content="Delete buttons work again (own confirmation box), new plans and students default to male, student page spacing fixed, program picker is a dropdown, assigned programs can be deleted">
+<meta name="app-version" content="1.24">
+<meta name="app-notes" content="Program dropdown no longer changes the dialog height (max 3 rows, scrolls); plan rows show name / days and level / goal on three lines; body type moved next to blood type; age is a visibly read-only box">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -139,6 +139,13 @@ footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
 .pick .pitem[data-sel='true']{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
 .pick .item{cursor:pointer}
 .cfmsg{margin:0;line-height:1.5}
+.four{display:grid;grid-template-columns:1.2fr .55fr .95fr 1.45fr;gap:12px}
+@media (max-width:560px){.four{grid-template-columns:1fr 1fr}}
+.four select{text-overflow:ellipsis}
+input.ro,input.ro:focus{background:var(--soft);color:var(--mute);border-style:dashed;cursor:not-allowed;text-align:center;outline:none}
+.item small.goal{color:var(--accent)}
+#aPick{position:relative}
+#aPick .pick{position:absolute;left:0;right:0;top:100%;z-index:5;max-height:252px;overflow-y:auto;background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.25);margin:4px 0 0}
 #stDetail{display:grid;gap:14px;align-content:start}
 #stDetail .empty{align-self:stretch}
 #stDetail .plhead2,#stDetail .banner{margin:0}
@@ -382,7 +389,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.23. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.24. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -705,17 +712,17 @@ function renderStudentForm() {
       <button id='sDel' class='ibtn danger' title='Delete student' aria-label='Delete student'>${ICON("<path d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/>")}</button>
     </div>
     ${f ? `<p class='banner' data-st='${f.st}'>${esc(f.text)}</p>` : ''}
-    <div class='three'>
+    <div class='four'>
       <label>Birth date<input id='sBirth' type='date' value='${esc(s.birth || '')}'></label>
-      <div class='fld'><span>Age</span><output id='sAge' class='bmi'>${esc(age ? String(age) : '\u2014')}</output></div>
+      <label>Age (auto)<input id='sAge' class='ro' readonly tabindex='-1' value='${esc(age ? String(age) : '\u2014')}' title='Calculated automatically from the birth date' aria-label='Age, calculated automatically from the birth date'></label>
       <label>Blood type<select id='sBlood'>${opts(BLOOD, s.blood, 'Unknown')}</select></label>
+      <label>Body type<select id='sBody'>${opts(BODY_TYPES, s.bodyType, 'Not set')}</select></label>
     </div>
     <div class='three'>
       <div class='fld'><span>Height (cm)</span>${stepper('sH', s.height, 50, 260, 1, "aria-label='Height in centimeters'")}</div>
       <div class='fld'><span>Weight (kg)</span>${stepper('sW', s.weight, 20, 400, 0.5, "aria-label='Weight in kilograms'")}</div>
       <div class='fld'><span>BMI</span><output id='sBmi' class='bmi'>${esc(bmiText(s.height, s.weight))}</output></div>
     </div>
-    <label>Body type<select id='sBody'>${opts(BODY_TYPES, s.bodyType, 'Not set')}</select></label>
     <div class='progs'><div class='phd'><h3 class='mh'>Programs</h3><button id='asgNew' class='primary'>Assign program</button></div>
       ${hist.map(a => asgCard(a, a === last)).join('') || `<p class='count'>No program assigned yet.</p>`}</div>`;
 }
@@ -743,7 +750,7 @@ function pickHTML(s) {
   const plans = Object.values(state.planLib).filter(p => planSex(p) === want).sort((x, y) => (x.name || '').localeCompare(y.name || ''));
   const cur = plans.find(p => p.id === asgPick);
   const row = (p, sel, btn) => {
-    const inner = p ? `${thumb(analyse(activeRows(p)), planSex(p))}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} · ${esc(p.level)} · ${esc(p.goal)}</small></span>`
+    const inner = p ? `${thumb(analyse(activeRows(p)), planSex(p))}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small></span>`
       : `<span><b>No program</b><small>Record only, no plan attached</small></span>`;
     return btn ? inner : `<div class='pitem' data-sel='${sel}'><button type='button' class='item' data-pid='${p ? esc(p.id) : ''}'>${inner}</button></div>`;
   };
@@ -797,7 +804,7 @@ async function deleteAsg(aid) {
 $('#stDetail').addEventListener('input', ev => {
   const s = state.students[stSel], id = ev.target.id; if (!s) return;
   if (id === 'sName') { s.name = ev.target.value; saveSoon(); renderStudents(); }
-  else if (id === 'sBirth') { s.birth = ev.target.value; $('#sAge').textContent = ageOf(s.birth) || '\u2014'; saveSoon(); renderStudents(); }
+  else if (id === 'sBirth') { s.birth = ev.target.value; $('#sAge').value = ageOf(s.birth) || '\u2014'; saveSoon(); renderStudents(); }
   else if (id === 'sBlood') { s.blood = ev.target.value; saveSoon(); }
   else if (id === 'sH' || id === 'sW') { s[id === 'sH' ? 'height' : 'weight'] = ev.target.value; $('#sBmi').textContent = bmiText(s.height, s.weight); saveSoon(); renderStudents(); }
   else if (id === 'sBody') { s.bodyType = ev.target.value; saveSoon(); }
@@ -813,7 +820,7 @@ $('#stDetail').addEventListener('click', ev => {
   if (b.dataset.act === 'asg-del') { deleteAsg(b.dataset.aid); return; }
   if (b.dataset.act === 'asg-plan') { plAssign = { sid: stSel, aid: b.dataset.aid }; plSel = null; plDay = 0; showPage('pl'); }
 });
-$('#asgDlg').addEventListener('click', ev => { const pk = ev.target.closest('[data-pid]'); if (pk) { asgPick = pk.dataset.pid; asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.closest('#aPickBtn')) { asgOpen = !asgOpen; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.id === 'aToday') $('#aDate').value = iso(today()); });
+$('#asgDlg').addEventListener('click', ev => { const pk = ev.target.closest('[data-pid]'); if (pk) { asgPick = pk.dataset.pid; asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (asgOpen && !ev.target.closest('#aPick')) { asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); } if (ev.target.closest('#aPickBtn')) { asgOpen = !asgOpen; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.id === 'aToday') $('#aDate').value = iso(today()); });
 $('#asgSave').onclick = saveAsg; $('#asgCancel').onclick = () => $('#asgDlg').close(); $('#asgDel').onclick = () => deleteAsg();
 function showPage(p) {
   $('#pageEx').hidden = p !== 'ex'; $('#pageSt').hidden = p !== 'st'; $('#pagePl').hidden = p !== 'pl'; if (p === 'pl') renderPlan();
@@ -978,7 +985,7 @@ function renderPlanList() {
   $('#plCount').textContent = `${list.length} of ${total} plan${total === 1 ? '' : 's'}`;
   $('#plList').innerHTML = list.map(p => {
     const rows = activeRows(p), a = analyse(rows), sx = planSex(p), open = p.id === plSel && !plAssign;
-    return `<div class='pitem' data-open='${open}'><button class='item' data-id='${esc(p.id)}' aria-expanded='${open}'>${open ? '' : thumb(a, sx)}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)} \u00b7 ${esc(p.goal)}</small></span><span class='cv' aria-hidden='true'>${ICON("<path d='M6 9l6 6 6-6'/>")}</span></button>`
+    return `<div class='pitem' data-open='${open}'><button class='item' data-id='${esc(p.id)}' aria-expanded='${open}'>${open ? '' : thumb(a, sx)}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small></span><span class='cv' aria-hidden='true'>${ICON("<path d='M6 9l6 6 6-6'/>")}</span></button>`
       + (open ? `<div class='pexp'>${rows.length ? figs(a, 'red', 280, sx) + legend(a, RED) + bpChart(a.bp) : `<p class='count'>This plan has no exercises yet.</p>`}</div>` : '') + `</div>`;
   }).join('') || `<p class='count'>${total ? 'No plan matches your filters.' : 'No plans yet. Use \u201cNew plan\u201d to create the first one.'}</p>`;
 }
