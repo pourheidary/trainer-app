@@ -187,6 +187,19 @@ date, age and blood type in one row.
 * The sample file `sample-plan-import.xlsx` (a 3-day split with real library names) can be downloaded from the popup and is also delivered with this version.
 * Headings shortened everywhere: `Muscles on day 1` and `Muscles in the plan`.
 
+## v1.34 - New site icon, default students and plans
+* The browser tab icon is now the bearded bodybuilder picture (embedded in the file, also used as the phone home-screen icon).
+* New tick box on every student and every plan in the list, shown **only in the Claude view** (the website on Cloudflare does not show it). It sits over the right edge of the card, so card sizes and layout did not change.
+* Ticked students and plans become the website defaults: pressing the save-version button (GitHub icon) now writes them into the saved file (a data block named dfData). Wherever that file runs, the defaults appear automatically in a fresh browser. A default the user later deletes in a browser does not come back there.
+* The save message says how many default students and plans were included. When a saved file is sent back to Claude, its defaults are carried into later versions.
+
+## v1.35 - Many plans per Excel file, GitHub button sends defaults
+* Import button on the Plan page is now an icon (file with a down arrow) next to + New plan.
+* One Excel file can hold many plans. Sheet **Plans** has one row per plan (Name, Days, Level, Goal, Sex); sheet **Exercises** now starts with a **Plan** column that names the plan each row belongs to. If a plan name already exists in the app, the imported one is added as `Name (2)` so nothing is overwritten. The result message lists every imported plan, renamed plans and skipped rows. The sample file now holds three plans (men and women).
+* Default tick on plan cards moved to the top left of each collapsed card (when a card is open it sits beside the arrow). Student ticks stay at the right.
+* The GitHub button (Claude view only) no longer downloads a file. It sends the ticked students and plans to the repository file `app/data/defaults.json` (a commit on main). The first time it asks for a GitHub token and keeps it only in that browser; a red dot shows when the ticks changed since the last send.
+* The website (Cloudflare) reads `data/defaults.json` when it opens and shows those students and plans in any browser that has not seen them before. Ticks and the GitHub button are not shown on the website.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).
