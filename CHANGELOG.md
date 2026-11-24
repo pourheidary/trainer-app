@@ -212,6 +212,12 @@ date, age and blood type in one row.
 ## v1.38 - Plan tick 3 pixels higher
 * The default tick on collapsed plan cards moved 3 pixels further up.
 
+## v1.39 - Sample file download works in the Claude page
+* Download sample file in the import popup showed the error This link can't be opened here inside the Claude page. It now uses the page's save-file feature there (with a confirmation), and still downloads normally on the website.
+
+## v1.40 - New import icon
+* The Import plans button now shows a list with a plus sign.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).
