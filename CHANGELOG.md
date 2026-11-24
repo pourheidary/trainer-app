@@ -218,6 +218,9 @@ date, age and blood type in one row.
 ## v1.40 - New import icon
 * The Import plans button now shows a list with a plus sign.
 
+## v1.41 - Muscle map colours fixed on iPhone
+* On iPhone Safari (and the Telegram in-app browser) the muscle figure showed the original rainbow colours of the body picture around the highlighted muscles. Safari ignores the CSS grey filter inside SVG. The grey body now uses an SVG filter (feColorMatrix) that every browser supports. On desktop Chrome the picture is pixel-identical to before.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).
