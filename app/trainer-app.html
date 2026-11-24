@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.27">
-<meta name="app-notes" content="Plan exercise rows: remove (X) at the end of the first line next to the name (long names wrap); second line is one row with move up/down, sets, reps and the superset button; superset button fixed (it was broken by a missing colour list)"(auto)" removed from Age">
+<meta name="app-version" content="1.29">
+<meta name="app-notes" content="Edit program now opens the same plan editor in a popup on the student page; changes affect only the student\'s own copy, never the library plan"(auto)" removed from Age">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -139,8 +139,14 @@ footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
 .pick .pitem[data-sel='true']{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
 .pick .item{cursor:pointer}
 .cfmsg{margin:0;line-height:1.5}
+#plDlg{width:min(860px,96vw)}
+#plDlg .dlg{padding:12px}
+#plDlg #plEditor{min-height:0}
 .r1 .clickable{flex:1 1 auto;min-width:0;display:flex;gap:12px;align-items:center}
-.r1 .xdel{flex:none;width:var(--ctl);padding:0;align-self:flex-start}
+.xdel,.xdel:hover{flex:none;width:36px;height:36px;min-height:36px;padding:0;border-radius:50%;background:transparent;border:2px solid var(--danger);color:var(--danger);display:inline-grid;place-items:center;font-size:1rem;line-height:1}
+.xdel:hover{background:color-mix(in srgb,var(--danger) 14%,transparent)}
+.r1 .xdel{align-self:flex-start}
+.ach .xdel{margin-left:auto}
 .r2{flex-wrap:nowrap;align-items:flex-end;gap:10px}
 .r2 .mini{flex:1 1 0;min-width:0;max-width:128px;width:auto}
 .r2 .stepper{max-width:none}
@@ -403,7 +409,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.27. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.29. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -425,6 +431,13 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     <h2 id='cfTitle'>Are you sure?</h2>
     <p id='cfMsg' class='cfmsg'></p>
     <div class='acts'><button id='cfNo' type='button'>Cancel</button><button id='cfYes' type='button' class='primary'>Delete</button></div>
+  </div>
+</dialog>
+
+<dialog id='plDlg'>
+  <div class='dlg'>
+    <div id='plDlgHost'></div>
+    <div class='acts'><button id='plDlgClose' type='button' class='primary'>Done</button></div>
   </div>
 </dialog>
 
@@ -707,12 +720,12 @@ function asgCard(a, latest, n) {
   const bits = [a.height && `${a.height} cm`, a.weight && `${a.weight} kg`, bmiOf(a.height, a.weight) && `BMI ${bmiText(a.height, a.weight)}`, a.bodyType].filter(Boolean).join(' · ');
   const name = esc(p ? p.name : (a.planName || 'No program')), durHtml = dur ? ` <em class='adur'>(${esc(dur)})</em>` : '';
   const lines = p ? `<small>${p.days} day${p.days === 1 ? '' : 's'} · ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small>` : '';
-  return `<div class='acard'><div class='ach'><span class='num'>${n}</span><b>${esc(a.date || 'No date')}</b>${durHtml}</div>
+  return `<div class='acard'><div class='ach'><span class='num'>${n}</span><b>${esc(a.date || 'No date')}</b>${durHtml}<button type='button' class='xdel' data-act='asg-del' data-aid='${esc(a.id)}' aria-label='Delete this program' title='Delete this program'>\u2715</button></div>
     <div class='aplan'>${p ? thumb(analyse(activeRows(p)), planSex(p)) : ''}<span><b>${name}</b>${lines}</span></div>
     ${bits ? `<div class='acs'>${esc(bits)}</div>` : ''}
     ${a.notes ? `<div class='acn'>${esc(a.notes)}</div>` : ''}
     ${f ? `<div class='fu' data-st='${f.st}'>${esc(f.text)}</div>` : ''}
-    <div class='acb'><button type='button' data-act='asg-edit' data-aid='${esc(a.id)}'>Edit details</button><button type='button' data-act='asg-plan' data-aid='${esc(a.id)}' ${p ? '' : 'disabled'}>Edit program</button><button type='button' class='danger' data-act='asg-del' data-aid='${esc(a.id)}'>Delete</button></div></div>`;
+    <div class='acb'><button type='button' data-act='asg-edit' data-aid='${esc(a.id)}'>Edit details</button><button type='button' data-act='asg-plan' data-aid='${esc(a.id)}' ${p ? '' : 'disabled'}>Edit program</button></div></div>`;
 }
 function renderStudentForm() {
   const box = $('#stDetail');
@@ -835,7 +848,7 @@ $('#stDetail').addEventListener('click', ev => {
   if (b.id === 'asgNew') { openAsg(null); return; }
   if (b.dataset.act === 'asg-edit') { openAsg(b.dataset.aid); return; }
   if (b.dataset.act === 'asg-del') { deleteAsg(b.dataset.aid); return; }
-  if (b.dataset.act === 'asg-plan') { plAssign = { sid: stSel, aid: b.dataset.aid }; plSel = null; plDay = 0; showPage('pl'); }
+  if (b.dataset.act === 'asg-plan') { openAsgPlan(b.dataset.aid); return; }
 });
 $('#asgDlg').addEventListener('click', ev => { const pk = ev.target.closest('[data-pid]'); if (pk) { asgPick = pk.dataset.pid; asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (asgOpen && !ev.target.closest('#aPick')) { asgOpen = false; $('#aPick').innerHTML = pickHTML(state.students[stSel]); } if (ev.target.closest('#aPickBtn')) { asgOpen = !asgOpen; $('#aPick').innerHTML = pickHTML(state.students[stSel]); return; } if (ev.target.id === 'aToday') $('#aDate').value = iso(today()); });
 $('#asgSave').onclick = saveAsg; $('#asgCancel').onclick = () => $('#asgDlg').close(); $('#asgDel').onclick = () => deleteAsg();
@@ -904,7 +917,19 @@ function figure(sex, view, lv, pal, h) {
 }
 const figs = (a, pal, h, sex) => `<div class='figs'>${figure(sex, 'FRONT', a.glv, pal, h)}${figure(sex, 'BACK', a.glv, pal, h)}</div>`;
 const thumb = (a, sex) => `<span class='pthumb'>${figure(sex, 'FRONT', a.glv, 'red', 64)}${figure(sex, 'BACK', a.glv, 'red', 64)}</span>`;
-let plSel = null, plAssign = null, plDay = 0, saveT;
+let plSel = null, plAssign = null, plDay = 0, saveT, plDayBak = 0;
+function openAsgPlan(aid) {
+  plAssign = { sid: stSel, aid }; plDayBak = plDay; plDay = 0;
+  $('#plDlgHost').appendChild($('#plEditor')); renderEditor(); $('#plDlg').showModal();
+}
+function closeAsgPlan() {
+  if (!plAssign) return;
+  plAssign = null; plDay = plDayBak;
+  document.querySelector('#pagePl .layout').prepend($('#plEditor'));
+  if ($('#plDlg').open) $('#plDlg').close();
+  renderEditor(); renderPlanList(); renderStudents(); renderStudentForm();
+}
+$('#plDlg').addEventListener('close', closeAsgPlan); $('#plDlgClose').onclick = closeAsgPlan;
 const planSex = p => p.sex === 'FEMALE' ? 'FEMALE' : p.sex === 'MALE' ? 'MALE' : (state.sex === 'FEMALE' ? 'FEMALE' : 'MALE');
 const saveSoon = () => { clearTimeout(saveT); saveT = setTimeout(save, 400); };
 const resolve = x => all.find(e => e.id === x.id) || { name: x.n, target: x.t, secondary: x.s, image: '', body_part: x.b || '' };
@@ -1025,7 +1050,7 @@ function renderEditor() {
   let bar = '';
   if (plAssign) {
     const st = state.students[plAssign.sid], a = st && (st.assignments || []).find(x => x.id === plAssign.aid);
-    bar = `<div class='asgbar'><div>Editing <b>${esc(st ? st.name : '')}</b>\u2019s own copy of this program (given ${esc(a ? a.date : '')}). Changes here do not change the plan in the library.</div><button id='plBack' type='button'>Back to student</button></div>`;
+    bar = `<div class='asgbar'><div>Editing <b>${esc(st ? st.name : '')}</b>\u2019s own copy of this program (given ${esc(a ? a.date : '')}). Changes here do not change the plan in the library.</div><button id='plBack' type='button'>Done</button></div>`;
   }
   const tools = plAssign ? '' : `<button id='plDup' class='ibtn' title='Duplicate plan' aria-label='Duplicate plan'>${ICON("<rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V6a2 2 0 0 1 2-2h9'/>")}</button>
       <button id='plDel' class='ibtn danger' title='Delete plan' aria-label='Delete plan'>${ICON("<path d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/>")}</button>`;
@@ -1112,7 +1137,7 @@ $('#plEditor').addEventListener('input', ev => {
 $('#plEditor').addEventListener('click', ev => {
   const inf = ev.target.closest('[data-info]'); if (inf) { openInfo(inf.dataset.info); return; }
   const b = ev.target.closest('button'), p = getPlan(); if (!b || !p) return;
-  if (b.id === 'plBack') { stSel = plAssign.sid; plAssign = null; showPage('st'); renderStudents(); renderStudentForm(); return; }
+  if (b.id === 'plBack') { closeAsgPlan(); return; }
   if (b.dataset.psx) { p.sex = b.dataset.psx; saveSoon(); renderEditor(); renderPlanList(); return; }
   if (b.dataset.n) { p.days = +b.dataset.n; saveSoon(); renderPlanList(); renderEditor(); return; }
   if (b.dataset.d) { plDay = +b.dataset.d; renderTabs(); renderDay(); return; }
