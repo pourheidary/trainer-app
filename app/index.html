@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.19">
-<meta name="app-notes" content="Export backup works inside Claude (uses the Claude save dialog)">
+<meta name="app-version" content="1.21">
+<meta name="app-notes" content="Student page like the plan page: name box on top with a delete icon, instant saving, birth date, age and blood type in one row">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -305,8 +305,8 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
   <div class="acts">
     <button id="folderBtn" hidden class="ibtn" title="Dataset folder" aria-label="Dataset folder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
     <button id="ghBtn" class="ibtn" data-new="true" title="Save this version for GitHub" aria-label="Save this version for GitHub"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></button>
-    <button id="exportBtn" class="ibtn" title="Export backup" aria-label="Export backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></button>
-    <button id="importBtn" class="ibtn" title="Import backup" aria-label="Import backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"/></svg></button>
+    <button id="exportBtn" class="ibtn" title="Export backup: save your data to a file" aria-label="Export backup: save your data to a file"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 20h16"/></svg></button>
+    <button id="importBtn" class="ibtn" title="Import backup: load your data from a file" aria-label="Import backup: load your data from a file"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></button>
     <input id="importFile" type="file" accept="application/json" hidden>
   </div>
 </div>
@@ -366,7 +366,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.19. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.21. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -653,7 +653,7 @@ function renderStudents() {
     .sort((a, b) => ((pr[(followUpOf(a) || {}).st] ?? 2) - (pr[(followUpOf(b) || {}).st] ?? 2)) || a.name.localeCompare(b.name));
   $('#stCount').textContent = `${list.length} student${list.length === 1 ? '' : 's'}`;
   $('#stList').innerHTML = list.map(s => { const f = followUpOf(s);
-    return `<button class='item' data-id='${esc(s.id)}' ${s.id === stSel ? "aria-current='true'" : ''}><i class='av' data-st='${f ? f.st : ''}'>${SEXICON[s.sex === 'Female' ? 'Female' : 'Male']}</i><span><b>${esc(s.name)}</b><small>${esc(brief(s))}</small>${f ? `<small class='fu' data-st='${f.st}'>${esc(f.text)}</small>` : ''}</span></button>`; }).join('')
+    return `<button class='item' data-id='${esc(s.id)}' ${s.id === stSel ? "aria-current='true'" : ''}><i class='av' data-st='${f ? f.st : ''}'>${SEXICON[s.sex === 'Female' ? 'Female' : 'Male']}</i><span><b>${esc(s.name || 'Unnamed student')}</b><small>${esc(brief(s))}</small>${f ? `<small class='fu' data-st='${f.st}'>${esc(f.text)}</small>` : ''}</span></button>`; }).join('')
     || `<p class='count'>No students yet. Use \u201cNew student\u201d to add the first one.</p>`;
 }
 function asgCard(a, latest) {
@@ -667,40 +667,26 @@ function asgCard(a, latest) {
 }
 function renderStudentForm() {
   const box = $('#stDetail');
-  if (!stSel) { box.innerHTML = `<div class='empty'><div><b>Select a student</b>Choose a student from the list, or add a new one.</div></div>`; return; }
-  const isNew = stSel === 'new';
-  const s = isNew ? { name: '', sex: 'Male', birth: '', blood: '', assignments: [] } : state.students[stSel];
-  const f = isNew ? null : followUpOf(s), age = ageOf(s.birth) || (s.age ? `${s.age} (old record)` : '');
+  const s = stSel ? state.students[stSel] : null;
+  if (!s) { box.innerHTML = `<div class='empty'><div><b>Select a student</b>Choose a student from the list, or add a new one.</div></div>`; return; }
+  const f = followUpOf(s), age = ageOf(s.birth) || (s.age ? `${s.age} (old record)` : '');
   const hist = [...(s.assignments || [])].map((a, i) => [a, i]).sort((x, y) => (y[0].date || '').localeCompare(x[0].date || '') || y[1] - x[1]).map(x => x[0]), last = latestAsg(s);
-  box.innerHTML = `<h2 class='sth'>${isNew ? 'New student' : esc(s.name)}</h2>
-  ${f ? `<p class='banner' data-st='${f.st}'>${esc(f.text)}</p>` : ''}
-  <div class='sform'>
-    <div class='nameRow'>
-      <label class='grow'>Name<input id='sName' value='${esc(s.name)}' autocomplete='off'></label>
-      <div class='fld'><span>Sex</span><div id='sSex' class='seg sx' role='group' aria-label='Sex'>
+  box.innerHTML = `<div class='plhead2'>
+      <input id='sName' class='plname' value='${esc(s.name)}' placeholder='Student name' aria-label='Student name' autocomplete='off'>
+      <div id='sSex' class='seg sx' role='group' aria-label='Sex'>
         <button type='button' data-sx='Male' aria-pressed='${s.sex !== 'Female'}' aria-label='Male' title='Male'>${MARS}</button>
         <button type='button' data-sx='Female' aria-pressed='${s.sex === 'Female'}' aria-label='Female' title='Female'>${VENUS}</button>
-      </div></div>
+      </div>
+      <button id='sDel' class='ibtn danger' title='Delete student' aria-label='Delete student'>${ICON("<path d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/>")}</button>
     </div>
+    ${f ? `<p class='banner' data-st='${f.st}'>${esc(f.text)}</p>` : ''}
     <div class='three'>
       <label>Birth date<input id='sBirth' type='date' value='${esc(s.birth || '')}'></label>
       <div class='fld'><span>Age</span><output id='sAge' class='bmi'>${esc(age ? String(age) : '\u2014')}</output></div>
       <label>Blood type<select id='sBlood'>${opts(BLOOD, s.blood, 'Unknown')}</select></label>
     </div>
-    <div class='acts'>${isNew ? '' : '<button id="sDel" class="danger left">Delete student</button>'}<button id='sSave' class='primary'>${isNew ? 'Add student' : 'Save profile'}</button></div>
-  </div>
-  ${isNew ? '' : `<div class='progs'><div class='phd'><h3 class='mh'>Programs</h3><button id='asgNew' class='primary'>Assign program</button></div>
-    ${hist.map(a => asgCard(a, a === last)).join('') || `<p class='count'>No program assigned yet.</p>`}</div>`}`;
-  $('#sSave').onclick = saveStudent;
-  if (!isNew) $('#sDel').onclick = deleteStudent;
-}
-async function saveStudent() {
-  const name = $('#sName').value.trim();
-  if (!name) { $('#sName').focus(); return; }
-  const id = stSel === 'new' ? 's' + Date.now() : stSel, old = state.students[id] || { assignments: [] };
-  state.students[id] = { ...old, id, name, sex: (($('#sSex [aria-pressed=true]') || {}).dataset || {}).sx || 'Male', birth: $('#sBirth').value, blood: $('#sBlood').value, assignments: old.assignments || [] };
-  const wasNew = stSel === 'new'; stSel = id; await save(); renderStudents(); renderStudentForm();
-  if (wasNew) toast('Student added. Use \u201cAssign program\u201d to give the first program.');
+    <div class='progs'><div class='phd'><h3 class='mh'>Programs</h3><button id='asgNew' class='primary'>Assign program</button></div>
+      ${hist.map(a => asgCard(a, a === last)).join('') || `<p class='count'>No program assigned yet.</p>`}</div>`;
 }
 async function deleteStudent() {
   if (!confirm('Delete this student and all of their programs?')) return;
@@ -756,11 +742,18 @@ async function deleteAsg() {
   s.assignments = s.assignments.filter(x => x.id !== asgEdit);
   await save(); $('#asgDlg').close(); renderStudents(); renderStudentForm();
 }
-$('#stDetail').addEventListener('input', ev => { if (ev.target.id === 'sBirth') $('#sAge').textContent = ageOf(ev.target.value) || '\u2014'; });
+$('#stDetail').addEventListener('input', ev => {
+  const s = state.students[stSel], id = ev.target.id; if (!s) return;
+  if (id === 'sName') { s.name = ev.target.value; saveSoon(); renderStudents(); }
+  else if (id === 'sBirth') { s.birth = ev.target.value; $('#sAge').textContent = ageOf(s.birth) || '\u2014'; saveSoon(); renderStudents(); }
+  else if (id === 'sBlood') { s.blood = ev.target.value; saveSoon(); }
+});
 $('#stDetail').addEventListener('click', ev => {
+  const s = state.students[stSel]; if (!s) return;
   const sx = ev.target.closest('[data-sx]');
-  if (sx) { for (const x of $('#sSex').children) x.setAttribute('aria-pressed', String(x === sx)); return; }
+  if (sx) { s.sex = sx.dataset.sx; for (const x of $('#sSex').children) x.setAttribute('aria-pressed', String(x === sx)); saveSoon(); renderStudents(); return; }
   const b = ev.target.closest('button'); if (!b) return;
+  if (b.id === 'sDel') { deleteStudent(); return; }
   if (b.id === 'asgNew') { openAsg(null); return; }
   if (b.dataset.act === 'asg-edit') { openAsg(b.dataset.aid); return; }
   if (b.dataset.act === 'asg-plan') { plAssign = { sid: stSel, aid: b.dataset.aid }; plSel = null; plDay = 0; showPage('pl'); }
@@ -776,7 +769,13 @@ function showPage(p) {
 }
 $('#tabEx').onclick = () => showPage('ex'); $('#tabSt').onclick = () => showPage('st');
 $('#stList').addEventListener('click', ev => { const b = ev.target.closest('.item'); if (!b) return; stSel = b.dataset.id; renderStudents(); renderStudentForm(); });
-$('#stAdd').onclick = () => { stSel = 'new'; renderStudents(); renderStudentForm(); $('#sName').focus(); };
+$('#stAdd').onclick = () => {
+  const id = 's' + Date.now();
+  state.students[id] = { id, name: 'New student', sex: 'Male', birth: '', blood: '', assignments: [] };
+  stSel = id; saveSoon();
+  $('#stQ').value = ''; $('#stQ').dispatchEvent(new Event('input', { bubbles: true }));
+  renderStudents(); renderStudentForm(); const n = $('#sName'); n.focus(); n.select();
+};
 $('#stQ').addEventListener('input', renderStudents);
 (async () => {
   const s = await load();
