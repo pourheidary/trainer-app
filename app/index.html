@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.31">
-<meta name="app-notes" content="Clicking outside the student program editor popup closes it">
+<meta name="app-version" content="1.32">
+<meta name="app-notes" content="All popups close when you click outside them; plus and minus signs are centred; exercise counts per day and for the whole plan; whole-row hover and scroll reset in the add-exercise popup">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -139,6 +139,10 @@ footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
 .pick .pitem[data-sel='true']{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
 .pick .item{cursor:pointer}
 .cfmsg{margin:0;line-height:1.5}
+.stepper button,.pctl button,.r3 button{display:inline-grid;place-items:center;line-height:0}
+.stepper button svg,.pctl button svg,.r3 button svg{display:block}
+.exc{font-size:calc(1.05rem - 3pt);font-weight:500;color:var(--mute)}
+.prow .item:hover{background:none}
 #plDlg{width:min(860px,96vw)}
 #plDlg .dlg{padding:12px}
 #plDlg #plEditor{min-height:0}
@@ -256,7 +260,8 @@ input:not([type='file']),select{height:var(--ctl)}
 .pitem[data-open='true'] .cv svg{transform:rotate(180deg)}
 .prow{display:flex;align-items:center;border-radius:10px;margin-bottom:2px}
 .prow .item{flex:1 1 auto;min-width:0;width:auto;margin:0}
-.prow[data-n]:not([data-n='0']){background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.prow[data-n]:not([data-n='0']){background:color-mix(in srgb,var(--accent) 16%,var(--surface));box-shadow:inset 3px 0 0 var(--accent)}
+.prow[data-n='0']:hover{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}
 .pctl{display:flex;align-items:center;gap:4px;flex:none;padding-right:4px}
 .pctl button{width:var(--ctl);padding:0;font-size:1.3rem;line-height:1}
 .pn{min-width:24px;text-align:center}
@@ -414,7 +419,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.31. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.32. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -675,7 +680,7 @@ $('#importFile').onchange = async e => {
 let stSel = null;
 const MARS = `<img src='${AVATAR.Male}' alt=''>`, VENUS = `<img src='${AVATAR.Female}' alt=''>`;
 const SEXICON = { Male: MARS, Female: VENUS };
-const stepper = (id, val, min, max, inc, attrs = '') => `<span class='stepper'><button type='button' class='stp' data-dir='-1' aria-label='Decrease'>\u2212</button><input ${id ? `id='${id}'` : ''} type='number' min='${min}' max='${max}' step='any' data-inc='${inc}' inputmode='decimal' value='${esc(val)}' ${attrs}><button type='button' class='stp' data-dir='1' aria-label='Increase'>+</button></span>`;
+const stepper = (id, val, min, max, inc, attrs = '') => `<span class='stepper'><button type='button' class='stp' data-dir='-1' aria-label='Decrease'><svg width='14' height='14' viewBox='0 0 14 14' aria-hidden='true'><path d='M2.5 7h9' stroke='currentColor' stroke-width='2' stroke-linecap='round' fill='none'/></svg></button><input ${id ? `id='${id}'` : ''} type='number' min='${min}' max='${max}' step='any' data-inc='${inc}' inputmode='decimal' value='${esc(val)}' ${attrs}><button type='button' class='stp' data-dir='1' aria-label='Increase'><svg width='14' height='14' viewBox='0 0 14 14' aria-hidden='true'><path d='M2.5 7h9M7 2.5v9' stroke='currentColor' stroke-width='2' stroke-linecap='round' fill='none'/></svg></button></span>`;
 const BLOOD = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const BODY_TYPES = ['Ectomorph (slim)', 'Mesomorph (athletic)', 'Endomorph (stocky)', 'Overweight', 'Obese'];
 const DURS = [[7, '1 week'], [14, '2 weeks'], [21, '3 weeks'], [30, '1 month'], [60, '2 months'], [90, '3 months']];
@@ -1037,7 +1042,7 @@ function renderPlanList() {
   $('#plList').innerHTML = list.map(p => {
     const rows = activeRows(p), a = analyse(rows), sx = planSex(p), open = p.id === plSel && !plAssign;
     return `<div class='pitem' data-open='${open}'><button class='item' data-id='${esc(p.id)}' aria-expanded='${open}'>${open ? '' : thumb(a, sx)}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small></span><span class='cv' aria-hidden='true'>${ICON("<path d='M6 9l6 6 6-6'/>")}</span></button>`
-      + (open ? `<div class='pexp'>${rows.length ? figs(a, 'red', 280, sx) + legend(a, RED) + bpChart(a.bp) : `<p class='count'>This plan has no exercises yet.</p>`}</div>` : '') + `</div>`;
+      + (open ? `<div class='pexp'>${rows.length ? `<h3 class='mh'>Muscles worked in the whole plan <span class='exc'>(${rows.length} Exercise${rows.length === 1 ? '' : 's'})</span></h3>` + figs(a, 'red', 280, sx) + legend(a, RED) + bpChart(a.bp) : `<p class='count'>This plan has no exercises yet.</p>`}</div>` : '') + `</div>`;
   }).join('') || `<p class='count'>${total ? 'No plan matches your filters.' : 'No plans yet. Use \u201cNew plan\u201d to create the first one.'}</p>`;
 }
 function renderPlan() {
@@ -1077,7 +1082,7 @@ function renderTabs() {
 function renderSummary() {
   const p = getPlan(), box = $('#plSum'); if (!p || !box) return;
   const r = p.routines[plDay], a = analyse(r);
-  box.innerHTML = r.length ? `${figs(a, 'blue', 120, planSex(p))}<div class='txt'><h3 class='mh'>Muscles worked on day ${plDay + 1}</h3>${legend(a, BLUE)}</div>`
+  box.innerHTML = r.length ? `${figs(a, 'blue', 120, planSex(p))}<div class='txt'><h3 class='mh'>Muscles worked on day ${plDay + 1} <span class='exc'>(${r.length} Exercise${r.length === 1 ? '' : 's'})</span></h3>${legend(a, BLUE)}</div>`
     : `<p class='count' style='margin:0'>Add exercises to see which muscles this day works.</p>`;
 }
 function renderDay() {
@@ -1088,7 +1093,7 @@ function renderDay() {
     return `<div class='row' data-pos='${L.pos}'${L.color ? ` style='--ss:${L.color}'` : ''}>
       <div class='r1'><div class='clickable' data-info='${esc(x.id)}' tabindex='0' role='button' aria-label='Show details of ${esc(e.name)}'><span class='num'>${L.label}</span>${u ? `<img src='${esc(u)}' alt=''>` : `<span class='ph'></span>`}<span class='rn'>${esc(e.name)}</span></div>
         <button data-i='${i}' data-act='del' class='danger xdel' aria-label='Remove exercise' title='Remove'>\u2715</button></div>
-      <div class='r2'><div class='r3'><button data-i='${i}' data-act='up' aria-label='Move up' title='Move up'>\u2191</button><button data-i='${i}' data-act='down' aria-label='Move down' title='Move down'>\u2193</button></div>
+      <div class='r2'><div class='r3'><button data-i='${i}' data-act='up' aria-label='Move up' title='Move up'><svg width='16' height='16' viewBox='0 0 16 16' aria-hidden='true'><path d='M8 13V3M3.5 7.5 8 3l4.5 4.5' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg></button><button data-i='${i}' data-act='down' aria-label='Move down' title='Move down'><svg width='16' height='16' viewBox='0 0 16 16' aria-hidden='true'><path d='M8 3v10M3.5 8.5 8 13l4.5-4.5' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg></button></div>
         <div class='mini sets'><span>Sets</span>${stepper('', x.sets, 1, 20, 1, `data-i='${i}' data-f='sets' aria-label='Sets'`)}</div>
         <div class='mini reps'><span>Reps</span>${stepper('', parseInt(x.reps) || 10, 1, 100, 1, `data-i='${i}' data-f='reps' aria-label='Reps'`)}</div>
         <div class='r3'>${i < r.length - 1 ? `<button data-i='${i}' data-act='link' aria-pressed='${L.linked}' aria-label='Superset with the next exercise' title='Superset with the next exercise'>${chain}</button>` : `<button disabled aria-label='No next exercise to link' title='The last exercise has no next one to link with'>${chain}</button>`}</div></div>
@@ -1112,7 +1117,7 @@ function renderPick() {
   box.innerHTML = list.map(e => {
     const n = cur.filter(x => x.id === e.id).length;
     return `<div class='prow' data-id='${esc(e.id)}' data-n='${n}'><button class='item' aria-label='Add ${esc(e.name)}'><img src='${esc(fileUrl(e.image))}' alt='' loading='lazy'><span><b>${esc(e.name)}</b><small>${esc(e.target)}</small></span></button>
-      <span class='pctl'>${n ? `<button type='button' data-padd='-1' aria-label='Remove one ${esc(e.name)}'>\u2212</button><b class='pn'>${n}</b>` : ''}<button type='button' data-padd='1' aria-label='Add one more ${esc(e.name)}'>+</button></span></div>`;
+      <span class='pctl'>${n ? `<button type='button' data-padd='-1' aria-label='Remove one ${esc(e.name)}'><svg width='14' height='14' viewBox='0 0 14 14' aria-hidden='true'><path d='M2.5 7h9' stroke='currentColor' stroke-width='2' stroke-linecap='round' fill='none'/></svg></button><b class='pn'>${n}</b>` : ''}<button type='button' data-padd='1' aria-label='Add one more ${esc(e.name)}'><svg width='14' height='14' viewBox='0 0 14 14' aria-hidden='true'><path d='M2.5 7h9M7 2.5v9' stroke='currentColor' stroke-width='2' stroke-linecap='round' fill='none'/></svg></button></span></div>`;
   }).join('') || `<p class='count'>No exercise matches.</p>`;
   box.scrollTop = keep;
 }
@@ -1217,9 +1222,14 @@ function enhanceSearch(el) {
   x.onclick = () => { el.value = ''; x.hidden = true; el.dispatchEvent(new Event('input', { bubbles: true })); el.focus(); };
 }
 ['#q', '#stQ', '#plQ'].forEach(id => enhanceSearch($(id)));
-$('#pQ').addEventListener('input', () => { $('#pX').hidden = !$('#pQ').value; renderPick(); });
-for (const id of ['#pE', '#pT', '#pB']) $(id).addEventListener('change', renderPick);
-$('#pX').onclick = () => { $('#pQ').value = ''; $('#pX').hidden = true; renderPick(); $('#pQ').focus(); }; $('#pClose').onclick = () => $('#pick').close();
+$('#pQ').addEventListener('input', () => { $('#pX').hidden = !$('#pQ').value; $('#pList').scrollTop = 0; renderPick(); });
+for (const id of ['#pE', '#pT', '#pB']) $(id).addEventListener('change', () => { $('#pList').scrollTop = 0; renderPick(); });
+$('#pX').onclick = () => { $('#pQ').value = ''; $('#pX').hidden = true; $('#pList').scrollTop = 0; renderPick(); $('#pQ').focus(); }; $('#pClose').onclick = () => $('#pick').close();
+for (const d of document.querySelectorAll('dialog')) {
+  let down = false;
+  d.addEventListener('pointerdown', ev => { down = ev.target === d; });
+  d.addEventListener('click', ev => { if (ev.target === d && down && d.open) d.close(); down = false; });
+}
 </script>
 </body>
 </html>

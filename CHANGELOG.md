@@ -1,7 +1,11 @@
 # Changelog
 
-Versions are in order. Each one is a git commit and a file in `history/`.
-Dates are the time the snapshot was saved in the working environment.
+Every step of the Trainer App, from the first page to the current version. Each version is a file
+(`trainer-app-vX.Y.html`) and a git commit/tag. Newest entries are at the bottom.
+
+How to read this file: **v0.x and v1.0** were recorded exactly when they were saved. **v1.1 to v1.16** were
+made quickly, one request after another; only v1.1, v1.7, v1.10 and v1.12 were kept as files, so those versions
+are described together by feature, not one by one. **v1.17 onward** are recorded one by one.
 
 ## Not saved (cannot be recovered byte for byte)
 
@@ -53,3 +57,128 @@ Exercise rows in the day list use three lines.
 ## v1.0 - Compact widths and avatars (`history/v1.0-current.html`, `tools/patch6.py`)
 Sets and reps controls narrower and on one line with the move/delete buttons. Male and female symbols are
 the supplied avatar images; student avatars use them with a colored follow-up ring. Vecteezy attribution.
+
+## v1.1 to v1.16 - Programs, popups, charts and look (grouped; saved files: v1.1, v1.7, v1.10, v1.12)
+The exact version of each item below was not recorded, but all of them were in place by v1.12, except the
+face avatars, which are the current avatar images and were finished before v1.17.
+* **Programs given to students:** a student keeps a history of programs. "Assign program" copies a library plan
+  into the student's record, so editing the library plan later does not change what the student was given.
+  "Edit program" opens the student's own copy in the Plan page with a bar that says so and a "Back to student" button.
+  Each record has a date, follow-up reminder, notes and (at that time) the measurements.
+* **Follow-up reminder:** green, amber and red status from the date a program was given plus the chosen follow-up time.
+* **Exercise information popup:** clicking an exercise opens a popup with the animation, muscle map and instructions.
+* **Supersets:** exercises in a day can be grouped as a superset; each group has its own color, number badge and left border.
+* **Body-part chart** on each plan: bars per body part with dotted guide lines at 3, 10 and 20 sets and color tiers
+  (v1.12: tiers end exactly at the guide lines; 1, 2 and 3 sets have different bar widths).
+* **"Designed for" (men or women)** selector on the plan, shown with the male and female symbols.
+* **Header GitHub button** (only inside Claude) that downloads the current version as a file for GitHub, with a red dot when
+  the version has not been saved yet. Toast messages for confirmations.
+* **One button style:** filled buttons everywhere, one common hover color; all controls 44 px high; plus/minus steppers for
+  numbers; icons aligned in the supersets row.
+* **New face avatars** for male and female (embedded as small images) replacing the earlier avatar pictures.
+* **Plan list row:** thumbnail of the two body views, name and a small line with days, level and goal.
+* Smaller layout fixes in the exercise page (image/popup size), widths of sets and reps boxes, and the filter bar.
+
+## Hosting and data steps (not app versions, but part of the history)
+1. Dataset hasaneyldrm/exercises-dataset (1324 exercises) is used with the creator's permission.
+2. The data was slimmed to English only: `exercises.json` went from 16.59 MB to 0.96 MB (`make-slim-data.py`).
+3. Private GitHub repo `trainer-app`; pushes with a fine-grained access token. Images (1324) pushed in one go after raising
+   `http.postBuffer`; the 1324 animation files pushed in batches with `push-videos.command`.
+4. Cloudflare Workers (static assets, `wrangler.jsonc`, no build command) deploys automatically on every push:
+   https://trainer-app.darvagdarvag.workers.dev
+5. `save-to-github.command`: copies the newest `trainer-app*.html` from Downloads to `app/`, keeps a copy in `history/`,
+   commits, tags and pushes.
+6. Student and plan data live in each browser's own storage, so the website starts empty; data was moved from the Claude
+   page to the website with Export and Import.
+
+
+## v1.17 - Data comes from folders next to the app
+The exercise data, images and animations are read from the `data`, `images` and `videos` folders next to the page.
+The folder picker was removed from the website version.
+
+## v1.18 - Folder picker only inside Claude
+Inside Claude the dataset folder picker is still offered (the page has no folders beside it there). On the website the
+picker and the GitHub button are hidden and the data is read automatically.
+
+## v1.19 - Export works inside Claude
+The Export button uses the Claude save dialog when the page runs inside Claude (the normal browser download was blocked
+silently there). On the website it still downloads a file.
+
+## v1.20 - Export and Import icons
+The two backup icons were swapped so that Export (data leaves the app) points out and Import (data comes in) points in.
+
+## v1.21 - Student page like the plan page
+Name box on top with the male/female buttons and a delete icon, no Save button (changes save by themselves), and birth
+date, age and blood type in one row.
+
+## v1.22 - Student profile and assign dialog
+* The delete icon stays on the first row; the name box shrinks to make room.
+* Height, weight, BMI and body type moved from the assign dialog into the student profile (they are saved automatically).
+  Existing students get the values of their latest program. When a program is assigned, the current measurements are copied
+  into that record, so the history still shows what they were at that date.
+* The program chooser in the assign dialog looks like the plan list (thumbnail, name, details) instead of a plain select.
+* A male student sees only men's plans; a female student only women's plans.
+
+## v1.23 - Working delete buttons and cleaner student page
+* Delete did nothing inside Claude because the browser's built-in confirmation box is blocked there. The app now has its own
+  confirmation box ("Are you sure?" with Cancel and a red Delete button). Used for deleting a student, a plan, an assigned
+  program and a custom exercise.
+* New plans and new students are male by default; the trainer can change it.
+* Student page spacing fixed (labels and fields were running together).
+* The program chooser became a drop-down that opens and closes.
+* Each program card in a student's history has a red Delete button (removes that whole record: program, measurements, notes).
+
+## v1.24 - Dropdown height, three-line plan rows, student row
+* The program drop-down opens as a floating list over the dialog, so the dialog keeps its height. It shows about three plans and
+  scrolls for the rest; clicking outside closes it.
+* Plan rows (Plan page list and the assign dialog) use three lines: name; days and level; goal in the accent color. Fonts and sizes unchanged.
+* Student profile, second line: birth date, age, blood type (narrower), body type, all on one line. Age is a grey, dashed,
+  read-only box labelled "Age (auto)", calculated from the birth date.
+* This changelog is now kept up to date with every version.
+
+## v1.25 - Program history cards
+* "(auto)" removed from the Age label so it stays on one line (the box is still grey, dashed and read-only).
+* Programs in a student's history are numbered; the newest is always 1 and at the top (`1- 2026-11-17`).
+* Each card shows the plan like the plan list: picture, then name, "days · level" and the goal in the accent color.
+* The follow-up length is written after the program name in orange, in brackets, e.g. `Aghaye2 (3 weeks)`.
+  The old "Follow-up after 3 weeks" text was removed from the measurements line.
+* Under the picture: the student's body measurements at that date (`180 cm · 80 kg · BMI 24.7 · Normal · Mesomorph (athletic)`).
+* The last line of the newest card is the green/amber/red follow-up status with the days left.
+
+## v1.26 - Number badges and follow-up length
+* The orange follow-up length, e.g. `(3 weeks)`, moved to the first line of a program card, right after the date (it was after the plan name).
+* Program numbers in a student's history use the same grey number badge as the exercise rows of a day.
+* The exercise count on each day tab (Day 1, Day 2, ...) uses the same grey badge instead of the older oval.
+
+## v1.27 - Exercise rows in the plan editor
+* First line of each exercise: number badge, picture, name, and the remove button (X) at the far end. Long names wrap onto several lines and the X stays at the top right.
+* Second line, always one row: move up, move down, sets, reps, superset button.
+* The last exercise of a day shows the superset button greyed out (there is no next exercise to link with).
+* **Bug fix:** the superset button did nothing (an error about a missing colour list, present since about v1.12). It now links an exercise with the next one (labels 1A, 1B, ...), chains three, and unlinks again; each group has its own colour.
+* **Bug fix:** on phone width the plan editor was wider than the screen; the page layout now shrinks to fit.
+
+## v1.28 - Round remove buttons
+* The remove button of an exercise in the plan editor is now an empty circle with a red outline and a red X (it was a filled square).
+* The same circle replaces the Delete button on program cards in the student page and sits at the far right of the first line. It still asks for confirmation.
+
+## v1.29 - Edit a student's program in a popup
+* "Edit program" on the student page no longer jumps to the Plan page. It opens the same plan editor (name, level, goal, days, sex, day tabs, exercises, sets, reps, supersets, muscle maps) in a popup on the student page.
+* Changes affect only that student's own copy of the program; the plan in the library is never changed. Close with "Done" or Escape; the program card refreshes.
+
+## v1.30 - Pencil button for editing a program
+* The "Edit program" text button is replaced by a blue circle with a pencil, the same size and shape as the red remove circle, placed right next to it at the end of the first line of the program card. Greyed out when the record has no program.
+* "Edit details" stays as a text button at the bottom of the card.
+
+## v1.31 - Close the program editor by clicking outside
+* Clicking on the dark area outside the student program editor popup closes it (same as Done). Pressing the mouse inside the popup and releasing outside, for example when selecting text, does not close it.
+
+## v1.32 - Popups, icons, exercise counts, add-exercise list
+* Every popup closes when you click outside it (add exercise, edit exercise, assign program, confirmation boxes, exercise details, program editor). Selecting text inside and releasing outside does not close it.
+* The plus, minus and arrow signs inside buttons are now drawn icons, centred with equal space above and below (they were text characters sitting low). Used in the sets/reps/height/weight steppers, the add-exercise list and the move up/down buttons.
+* Exercise counts: the day heading shows `Muscles worked on day 1 (7 Exercises)` in a smaller size and updates the moment an exercise is added or removed. The whole-plan map (in the plan list) shows `(N Exercises)` for the active days.
+* Add-exercise popup: hovering highlights the whole row up to its right edge, in grey; chosen exercises are blue, so the two are easy to tell apart.
+* Add-exercise popup: typing in the search box (or changing a filter) scrolls the list back to the top.
+
+## Not built yet
+* Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
+* Persian version of the interface (planned after the English version is final).
