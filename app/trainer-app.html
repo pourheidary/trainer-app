@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.26">
-<meta name="app-notes" content="Follow-up length (orange) now sits after the date on the first line; program numbers and exercise counts on day tabs use the same grey number badge as the exercise rows"(auto)" removed from Age">
+<meta name="app-version" content="1.27">
+<meta name="app-notes" content="Plan exercise rows: remove (X) at the end of the first line next to the name (long names wrap); second line is one row with move up/down, sets, reps and the superset button; superset button fixed (it was broken by a missing colour list)"(auto)" removed from Age">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -29,7 +29,7 @@ html{overflow-y:scroll}
 h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
 .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;padding:0 clamp(16px,4vw,40px) 32px;align-items:start}
-@media (max-width:860px){.layout{grid-template-columns:1fr}}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px}
 #detail{min-height:420px;padding:24px}
 .empty{display:grid;place-items:center;text-align:center;min-height:360px;color:var(--mute)}
@@ -139,6 +139,12 @@ footer{padding:0 clamp(16px,4vw,40px) 24px;color:var(--mute);font-size:.85rem}
 .pick .pitem[data-sel='true']{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
 .pick .item{cursor:pointer}
 .cfmsg{margin:0;line-height:1.5}
+.r1 .clickable{flex:1 1 auto;min-width:0;display:flex;gap:12px;align-items:center}
+.r1 .xdel{flex:none;width:var(--ctl);padding:0;align-self:flex-start}
+.r2{flex-wrap:nowrap;align-items:flex-end;gap:10px}
+.r2 .mini{flex:1 1 0;min-width:0;max-width:128px;width:auto}
+.r2 .stepper{max-width:none}
+.r2 .r3{flex:none}
 .aplan{display:flex;gap:12px;align-items:center;margin:8px 0 4px}
 .aplan>span:not(.pthumb){min-width:0}
 .aplan b{display:block;font-weight:500;line-height:1.3;text-transform:capitalize;overflow-wrap:anywhere}
@@ -397,7 +403,7 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     </aside>
   </div>
 </div>
-<footer>Version 1.26. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.27. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -924,6 +930,7 @@ function bpChart(bp) {
     <div class='bpg' aria-hidden='true'>${[3, 10, 20].map(v => `<span style='left:${v / MAX * 100}%'><i>${v}</i></span>`).join('')}</div>
     ${items.map(([k, n]) => `<div class='bpr'><span class='bpn'>${esc(cap(k))}</span><span class='bpt'><span class='bpb ${tier(n)}${n <= 2 ? ' tiny' : ''}' style='width:${Math.min(100, n / MAX * 100)}%'>${n}</span></span></div>`).join('')}</div></div>`;
 }
+const SS_COLORS = ['#f08c00', '#2f9e44', '#1971c2', '#9c36b5', '#d6336c', '#0c8599'];
 function layoutRows(r) {
   const out = []; let n = 0, i = 0, g = 0;
   while (i < r.length) {
@@ -1046,10 +1053,12 @@ function renderDay() {
   const rows = r.map((x, i) => {
     const e = resolve(x), u = fileUrl(e.image), L = lay[i];
     return `<div class='row' data-pos='${L.pos}'${L.color ? ` style='--ss:${L.color}'` : ''}>
-      <div class='r1 clickable' data-info='${esc(x.id)}' tabindex='0' role='button' aria-label='Show details of ${esc(e.name)}'><span class='num'>${L.label}</span>${u ? `<img src='${esc(u)}' alt=''>` : `<span class='ph'></span>`}<span class='rn'>${esc(e.name)}</span></div>
-      <div class='r2'><div class='mini sets'><span>Sets</span>${stepper('', x.sets, 1, 20, 1, `data-i='${i}' data-f='sets' aria-label='Sets'`)}</div>
+      <div class='r1'><div class='clickable' data-info='${esc(x.id)}' tabindex='0' role='button' aria-label='Show details of ${esc(e.name)}'><span class='num'>${L.label}</span>${u ? `<img src='${esc(u)}' alt=''>` : `<span class='ph'></span>`}<span class='rn'>${esc(e.name)}</span></div>
+        <button data-i='${i}' data-act='del' class='danger xdel' aria-label='Remove exercise' title='Remove'>\u2715</button></div>
+      <div class='r2'><div class='r3'><button data-i='${i}' data-act='up' aria-label='Move up' title='Move up'>\u2191</button><button data-i='${i}' data-act='down' aria-label='Move down' title='Move down'>\u2193</button></div>
+        <div class='mini sets'><span>Sets</span>${stepper('', x.sets, 1, 20, 1, `data-i='${i}' data-f='sets' aria-label='Sets'`)}</div>
         <div class='mini reps'><span>Reps</span>${stepper('', parseInt(x.reps) || 10, 1, 100, 1, `data-i='${i}' data-f='reps' aria-label='Reps'`)}</div>
-        <div class='r3'><button data-i='${i}' data-act='up' aria-label='Move up' title='Move up'>\u2191</button><button data-i='${i}' data-act='down' aria-label='Move down' title='Move down'>\u2193</button>${i < r.length - 1 ? `<button data-i='${i}' data-act='link' aria-pressed='${L.linked}' aria-label='Superset with the next exercise' title='Superset with the next exercise'>${chain}</button>` : ''}<button data-i='${i}' data-act='del' class='danger' aria-label='Remove exercise' title='Remove'>\u2715</button></div></div>
+        <div class='r3'>${i < r.length - 1 ? `<button data-i='${i}' data-act='link' aria-pressed='${L.linked}' aria-label='Superset with the next exercise' title='Superset with the next exercise'>${chain}</button>` : `<button disabled aria-label='No next exercise to link' title='The last exercise has no next one to link with'>${chain}</button>`}</div></div>
     </div>`;
   }).join('') || `<p class='count'>No exercises yet. Add the first one for this day.</p>`;
   $('#plDay').innerHTML = `<div class='tabpanel' role='tabpanel'><div id='plSum' class='dsum'></div>
