@@ -179,6 +179,14 @@ date, age and blood type in one row.
 * Add-exercise popup: hovering highlights the whole row up to its right edge, in grey; chosen exercises are blue, so the two are easy to tell apart.
 * Add-exercise popup: typing in the search box (or changing a filter) scrolls the list back to the top.
 
+## v1.33 - Import a plan from Excel, shorter headings
+* New **Import plan** button on the Plan page, next to + New plan. It opens a small popup with two steps: download the sample file, then choose your filled Excel (.xlsx) file.
+* The Excel file has a sheet **Plan** (Name, Days, Level, Goal, Sex) and a sheet **Exercises** (Day, Day title, Exercise name, Sets, Reps, Superset). A third sheet, How to fill, explains the rules. One plan per file.
+* Exercise names are matched to the library (not case sensitive). Unknown names are skipped and listed after the import. Sets and reps are whole numbers; rows of the same day with the same Superset letter next to each other become a superset.
+* The imported plan is added to the plan library and opened. If the file is not a valid Excel file, the popup says so and nothing is changed. Works without any internet library.
+* The sample file `sample-plan-import.xlsx` (a 3-day split with real library names) can be downloaded from the popup and is also delivered with this version.
+* Headings shortened everywhere: `Muscles on day 1` and `Muscles in the plan`.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).

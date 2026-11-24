@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exercise library</title>
-<meta name="app-version" content="1.32">
-<meta name="app-notes" content="All popups close when you click outside them; plus and minus signs are centred; exercise counts per day and for the whole plan; whole-row hover and scroll reset in the add-exercise popup">
+<meta name="app-version" content="1.33">
+<meta name="app-notes" content="Import a whole plan from an Excel file (button next to New plan, with a downloadable sample); shorter muscle headings">
 <style>
 :root{--bg:#f3f5f8;--surface:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#dde3ea;--accent:#1f5fd6;--on-accent:#fff;--danger:#b3261e;--soft:#eef2f7}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171e;--surface:#18222c;--ink:#e8eef3;--mute:#93a3b2;--line:#2a3743;--accent:#6b9bff;--on-accent:#0b1220;--danger:#ff8a80;--soft:#202c38}}
@@ -45,6 +45,12 @@ h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
 aside{padding:16px}
 .ahead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .ahead b{font-size:1.15rem}
+.abtns{display:flex;gap:8px;align-items:center}
+.imp ol{margin:0 0 12px;padding-left:20px;line-height:1.5}
+.imp .res{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));line-height:1.5;display:none}
+.imp .res.on{display:block}
+.imp .res.bad{background:color-mix(in srgb,#d33 12%,var(--surface))}
+.imp .acts button{min-height:40px}
 .filters{display:grid;gap:8px;margin-bottom:12px}
 #list{max-height:68vh;overflow-y:auto;margin:0 -6px;padding:0 6px}
 .item{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;border-radius:10px;padding:6px;margin-bottom:2px}
@@ -413,13 +419,13 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
   <div class='layout'>
     <section id='plEditor' class='panel det'></section>
     <aside class='panel'>
-      <div class='ahead'><b>Plans</b><button id='plNew' class='link'>+ New plan</button></div>
+      <div class='ahead'><b>Plans</b><span class='abtns'><button id='plImp' class='link'>Import plan</button><button id='plNew' class='link'>+ New plan</button></span></div>
       <p id='plCount' class='count'></p>
       <div id='plList'></div>
     </aside>
   </div>
 </div>
-<footer>Version 1.32. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
+<footer>Version 1.33. Exercise images © Gym visual (gymvisual.com). Body figures from MuscleMap (MIT license). Avatars: <a href='https://www.vecteezy.com' target='_blank' rel='noopener'>Vecteezy.com</a>.</footer>
 
 <dialog id='exInfo'>
   <div class='dlg'>
@@ -433,6 +439,17 @@ button.link:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
     <h2 id='asgTitle'>Assign program</h2>
     <div id='asgBody' class='sform'></div>
     <div class='acts'><button id='asgDel' class='danger left' hidden>Delete</button><button id='asgCancel'>Cancel</button><button id='asgSave' class='primary'>Save</button></div>
+  </div>
+</dialog>
+
+<dialog id='impDlg'>
+  <div class='dlg imp'>
+    <h2>Import a plan from Excel</h2>
+    <ol><li>Download the sample file and fill it in (one plan per file).</li><li>Choose the filled .xlsx file here.</li></ol>
+    <div class='acts' style='justify-content:flex-start;flex-wrap:wrap'><button id='impSample' type='button'>Download sample file</button><button id='impPick' type='button' class='primary'>Choose Excel file</button></div>
+    <input id='impFile' type='file' accept='.xlsx' hidden>
+    <p id='impRes' class='res' role='status'></p>
+    <div class='acts'><button id='impClose' type='button'>Close</button></div>
   </div>
 </dialog>
 
@@ -1042,7 +1059,7 @@ function renderPlanList() {
   $('#plList').innerHTML = list.map(p => {
     const rows = activeRows(p), a = analyse(rows), sx = planSex(p), open = p.id === plSel && !plAssign;
     return `<div class='pitem' data-open='${open}'><button class='item' data-id='${esc(p.id)}' aria-expanded='${open}'>${open ? '' : thumb(a, sx)}<span><b>${esc(p.name || 'Untitled plan')}</b><small>${p.days} day${p.days === 1 ? '' : 's'} \u00b7 ${esc(p.level)}</small><small class='goal'>${esc(p.goal)}</small></span><span class='cv' aria-hidden='true'>${ICON("<path d='M6 9l6 6 6-6'/>")}</span></button>`
-      + (open ? `<div class='pexp'>${rows.length ? `<h3 class='mh'>Muscles worked in the whole plan <span class='exc'>(${rows.length} Exercise${rows.length === 1 ? '' : 's'})</span></h3>` + figs(a, 'red', 280, sx) + legend(a, RED) + bpChart(a.bp) : `<p class='count'>This plan has no exercises yet.</p>`}</div>` : '') + `</div>`;
+      + (open ? `<div class='pexp'>${rows.length ? `<h3 class='mh'>Muscles in the plan <span class='exc'>(${rows.length} Exercise${rows.length === 1 ? '' : 's'})</span></h3>` + figs(a, 'red', 280, sx) + legend(a, RED) + bpChart(a.bp) : `<p class='count'>This plan has no exercises yet.</p>`}</div>` : '') + `</div>`;
   }).join('') || `<p class='count'>${total ? 'No plan matches your filters.' : 'No plans yet. Use \u201cNew plan\u201d to create the first one.'}</p>`;
 }
 function renderPlan() {
@@ -1082,7 +1099,7 @@ function renderTabs() {
 function renderSummary() {
   const p = getPlan(), box = $('#plSum'); if (!p || !box) return;
   const r = p.routines[plDay], a = analyse(r);
-  box.innerHTML = r.length ? `${figs(a, 'blue', 120, planSex(p))}<div class='txt'><h3 class='mh'>Muscles worked on day ${plDay + 1} <span class='exc'>(${r.length} Exercise${r.length === 1 ? '' : 's'})</span></h3>${legend(a, BLUE)}</div>`
+  box.innerHTML = r.length ? `${figs(a, 'blue', 120, planSex(p))}<div class='txt'><h3 class='mh'>Muscles on day ${plDay + 1} <span class='exc'>(${r.length} Exercise${r.length === 1 ? '' : 's'})</span></h3>${legend(a, BLUE)}</div>`
     : `<p class='count' style='margin:0'>Add exercises to see which muscles this day works.</p>`;
 }
 function renderDay() {
@@ -1230,6 +1247,92 @@ for (const d of document.querySelectorAll('dialog')) {
   d.addEventListener('pointerdown', ev => { down = ev.target === d; });
   d.addEventListener('click', ev => { if (ev.target === d && down && d.open) d.close(); down = false; });
 }
+
+/* ---- Import plan from Excel (v1.33) ---- */
+const SAMPLE_XLSX_B64 = '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';
+async function zipRead(buf) {
+  const u8 = new Uint8Array(buf), dv = new DataView(buf); let e = u8.length - 22;
+  while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error('Not an Excel (.xlsx) file.');
+  const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true); const out = {}, dec = new TextDecoder();
+  for (let i = 0; i < n; i++) {
+    const method = dv.getUint16(p + 10, true), cs = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
+    const name = dec.decode(u8.subarray(p + 46, p + 46 + nl)), lnl = dv.getUint16(lo + 26, true), lxl = dv.getUint16(lo + 28, true), st = lo + 30 + lnl + lxl, raw = u8.subarray(st, st + cs);
+    out[name] = method === 0 ? raw : new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    p += 46 + nl + xl + cl;
+  }
+  return out;
+}
+async function readXlsx(buf) {
+  const z = await zipRead(buf), dec = new TextDecoder(), xml = n => z[n] ? new DOMParser().parseFromString(dec.decode(z[n]), 'application/xml') : null;
+  const wb = xml('xl/workbook.xml'), rels = xml('xl/_rels/workbook.xml.rels'); if (!wb || !rels) throw new Error('Not an Excel (.xlsx) file.');
+  const target = {}; for (const r of rels.getElementsByTagName('Relationship')) target[r.getAttribute('Id')] = r.getAttribute('Target');
+  const ss = [], sst = xml('xl/sharedStrings.xml');
+  if (sst) for (const si of sst.getElementsByTagName('si')) ss.push(Array.from(si.getElementsByTagName('t')).map(t => t.textContent).join(''));
+  const col = ref => { let c = 0; for (const ch of ref.replace(/[0-9]/g, '')) c = c * 26 + ch.charCodeAt(0) - 64; return c - 1; };
+  const sheets = [];
+  for (const sh of wb.getElementsByTagName('sheet')) {
+    const rid = sh.getAttribute('r:id') || sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+    let t = target[rid] || ''; t = t.replace(/^\//, ''); if (!t.startsWith('xl/')) t = 'xl/' + t;
+    const d = xml(t), rows = []; if (!d) continue;
+    for (const r of d.getElementsByTagName('row')) {
+      const arr = [];
+      for (const c of r.getElementsByTagName('c')) {
+        const ty = c.getAttribute('t'), v = c.getElementsByTagName('v')[0];
+        let val = '';
+        if (ty === 'inlineStr') val = Array.from(c.getElementsByTagName('t')).map(x => x.textContent).join('');
+        else if (v) val = ty === 's' ? (ss[+v.textContent] || '') : v.textContent;
+        arr[col(c.getAttribute('r'))] = val;
+      }
+      rows.push(Array.from(arr, x => x == null ? '' : String(x).trim()));
+    }
+    sheets.push({ name: sh.getAttribute('name'), rows });
+  }
+  return sheets;
+}
+function planFromSheets(sheets) {
+  const find = (nm, i) => sheets.find(x => x.name.trim().toLowerCase() === nm) || sheets[i];
+  const info = find('plan', 0), exs = find('exercises', 1);
+  if (!info || !exs || info === exs) throw new Error('The file needs two sheets: Plan and Exercises. Download the sample to see the layout.');
+  const kv = {}; for (const r of info.rows) if (r[0]) kv[r[0].toLowerCase()] = r[1] || '';
+  const pick = (list, v, d) => list.find(x => x.toLowerCase() === String(v || '').toLowerCase()) || d;
+  const lib = new Map(all.map(e => [e.name.toLowerCase().replace(/\s+/g, ' ').trim(), e]));
+  const routines = Array.from({ length: 7 }, () => []), titles = [], skipped = []; let maxDay = 1, count = 0;
+  for (const r of exs.rows) {
+    const day = parseInt(r[0], 10); if (!(day >= 1 && day <= 7) || !r[2]) continue;
+    const e = lib.get(r[2].toLowerCase().replace(/\s+/g, ' ').trim());
+    if (!e) { skipped.push('Day ' + day + ': ' + r[2]); continue; }
+    if (r[1] && !titles[day - 1]) titles[day - 1] = r[1];
+    const it = { id: e.id, n: e.name, t: e.target, s: e.secondary, b: e.body_part, sets: Math.max(1, Math.min(20, Math.round(+r[3]) || 3)), reps: String(Math.max(1, Math.min(100, parseInt(r[4], 10) || 10))) };
+    if (r[5]) it.ss = 'imp' + day + '_' + r[5].toLowerCase();
+    routines[day - 1].push(it); maxDay = Math.max(maxDay, day); count++;
+  }
+  if (!count) throw new Error('No known exercises were found in the Exercises sheet.');
+  routines.forEach(normSS);
+  const days = Math.max(maxDay, Math.min(7, Math.max(1, parseInt(kv.days, 10) || 1)));
+  const id = 'p' + Date.now();
+  const plan = { id, name: kv.name || 'Imported plan', days, level: pick(LEVELS, kv.level, 'Beginner'), goal: pick(GOALS, kv.goal, 'Muscle building'), sex: String(kv.sex || '').toUpperCase() === 'FEMALE' ? 'FEMALE' : 'MALE', titles: Array.from({ length: 7 }, (_, i) => titles[i] || '').slice(0, 7), routines };
+  return { plan, count, skipped };
+}
+function impMsg(t, bad) { const r = $('#impRes'); r.textContent = t; r.className = 'res on' + (bad ? ' bad' : ''); }
+$('#plImp').onclick = () => { $('#impRes').className = 'res'; $('#impFile').value = ''; $('#impDlg').showModal(); };
+$('#impClose').onclick = () => $('#impDlg').close();
+$('#impPick').onclick = () => $('#impFile').click();
+$('#impSample').onclick = () => {
+  const bin = atob(SAMPLE_XLSX_B64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([u], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })); a.download = 'sample-plan-import.xlsx';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+};
+$('#impFile').onchange = async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  try {
+    const { plan, count, skipped } = planFromSheets(await readXlsx(await f.arrayBuffer()));
+    state.planLib[plan.id] = plan; plSel = plan.id; plAssign = null; plDay = 0; saveSoon();
+    for (const sid of ['#plFDays', '#plFLevel', '#plFGoal', '#plFMuscle', '#plFBody']) $(sid).value = '';
+    $('#plQ').value = ''; $('#plQ').dispatchEvent(new Event('input', { bubbles: true })); renderPlan();
+    impMsg('Imported \u201c' + plan.name + '\u201d: ' + count + ' exercises in ' + plan.days + ' day' + (plan.days === 1 ? '' : 's') + '.' + (skipped.length ? ' Skipped ' + skipped.length + ' unknown name' + (skipped.length === 1 ? '' : 's') + ': ' + skipped.join('; ') + '.' : ''), skipped.length > 0);
+  } catch (err) { impMsg('Could not import: ' + err.message, true); }
+};
 </script>
 </body>
 </html>
