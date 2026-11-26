@@ -228,6 +228,20 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.49
+- Program card: equal spacing between the details, program and delete round buttons.
+
+## v1.48
+- Program card: barbell icon edits the program; the "Edit details" text button is replaced by a sliders icon placed left of the barbell, both in the same round style.
+
+## v1.47
+- Assign-program dialog: the "Assign program" button stays disabled until a program is chosen (editing an existing assignment is unchanged).
+
+## v1.46
+- Assign-program dialog: new "New Assessment" row (body type, height, weight) in one line, prefilled from the student; entering new values updates the student profile, the program card and the students list.
+- "Program given on" and "Follow-up after" share one line; dialog width reduced to two thirds.
+- Date fields (birth date, program date) are one box: type YYYY-MM-DD or click the calendar icon to open a Year / Month / Day pop-up (with Today for program date). Invalid typed dates are flagged and block saving.
+
 ## v1.45
 - Student edit and new-student header: tick (save) and cross (cancel) buttons on one line; the trash button is only shown in view mode.
 
