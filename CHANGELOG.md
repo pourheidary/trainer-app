@@ -221,6 +221,26 @@ date, age and blood type in one row.
 ## v1.41 - Muscle map colours fixed on iPhone
 * On iPhone Safari (and the Telegram in-app browser) the muscle figure showed the original rainbow colours of the body picture around the highlighted muscles. Safari ignores the CSS grey filter inside SVG. The grey body now uses an SVG filter (feColorMatrix) that every browser supports. On desktop Chrome the picture is pixel-identical to before.
 
+## v1.42 - Student page: view mode, Edit and Save
+* **New student** no longer creates a record right away. The form opens as a draft; the student is created only when Save is pressed (a name is required). Clicking another student, or Cancel, throws the draft away, so no empty student is ever left in the list.
+* A saved student now opens in **view mode**: first line = selected face avatar, the name (not editable), an Edit button and the trash button. The saved details (birth date, age, blood type, body type, height, weight, BMI) are shown below as plain text in the same layout.
+* The edit form (name, sex, birth date, blood type, body type, height, weight) opens only after Edit. Edit turns into **Save**; nothing is stored until Save is pressed. Clicking another student while editing discards the changes and shows a short notice. A Cancel button was added beside Save.
+* The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
+* Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
+
+## v1.45
+- Student edit and new-student header: tick (save) and cross (cancel) buttons on one line; the trash button is only shown in view mode.
+
+## v1.44
+- Browser calendar replaced by a simple Year / Month / Day drop-down picker (birth date and program date). Birth date order is Year (left), Month, Day (right); the day list adapts to the month and leap years.
+
+## v1.43 - Student page polish
+* Removed the cancel (cross) button that was added in v1.42. Save is now the usual floppy-disk icon.
+* The header (name, sex, save, trash) stays on one line in edit mode and for a new student, also on phones (the name box shrinks).
+* View mode: the edit and trash buttons now sit at the right end of the header line.
+* View mode: the birth date is no longer shown (the age is enough).
+* View mode: the gap between a title (Height, Weight, ...) and its value is now the normal 4 px used elsewhere on the site, and rows are closer together.
+
 ## Not built yet
 * Phone-sized PDF export of a plan (postponed; page per day or one continuous page not yet decided).
 * Persian version of the interface (planned after the English version is final).
