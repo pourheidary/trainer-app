@@ -228,6 +228,22 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.53
+- Student page: the full-width follow-up banner is gone; the follow-up text (same colours) now sits under the student's name without changing the header height.
+- Assessments chart: left axis numbers removed, chart is wider.
+- Summary line now reads e.g. "Latest: 73 kg (7 kg decrease)".
+
+## v1.52
+- Program details dialog: the Delete button is removed (a program can still be deleted with the red cross on its card).
+
+## v1.51
+- Assessments chart refined: light tinted panel, thin line with soft area, small hollow dots, smaller numbers, readable short dates (e.g. 15 Sep) that never overlap.
+- Weight / BMI are now small underlined text tabs instead of big buttons.
+- Student info, Assessments and Programs are separated by dividers and extra spacing.
+
+## v1.50
+- Student page: new Assessments section between the student info and the Programs, with Weight and BMI tabs. Each assigned program adds one point (from that assignment's measurements, ordered by date) to the trend chart. Hidden for new students and until the first program is assigned.
+
 ## v1.49
 - Program card: equal spacing between the details, program and delete round buttons.
 
