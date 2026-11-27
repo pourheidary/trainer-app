@@ -228,6 +228,12 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.65
+- Exercise pictures are now rounded squares (48 x 48 px, 8 px corners) everywhere instead of circles: the Exercises list, the picker used to add exercises to a plan, and the plan rows. In plan view mode the picture grows from 40 to 48 px.
+
+## v1.64
+- Plan page (view and edit mode): the number ovals of normal and superset exercises now line up in one column. Superset rows moved slightly left, normal rows slightly right.
+
 ## v1.63
 - New favicon: the bearded mascot supplied by the trainer (transparent background, cropped to fill the icon).
 - Default plans (and students) updated from the edited ones: one new default plan and two edited plans added to data/defaults.json.
