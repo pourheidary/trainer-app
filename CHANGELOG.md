@@ -228,6 +228,21 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.86
+- Program dialog: the ✕ (cancel) moved to the top-right corner of the popup.
+- Notice now only says "Editing <name>’s own copy of this program."
+
+## v1.85
+- Program dialog (dumbbell button) now edits a draft copy: nothing is applied until you press Save changes (bottom button, replaces Done).
+- The ✕ in the notice, Escape or a click outside cancels and discards all changes, including a program swap.
+- Footer version number updated.
+
+## v1.84
+- Program dialog (dumbbell button on a program card): new "Change program" dropdown above the notice, listing library plans for the student's sex. Choosing one asks for confirmation, then replaces the student's copy (edits to the old copy are lost).
+
+## v1.83 (test)
+- Program card: body photos moved from below the figures to the same row, right-aligned, same 64px height as the figures.
+
 ## v1.82
 - Dialog title first line is smaller and sits closer to the student name.
 - Body crop ellipse now touches the top and bottom of the crop rectangle.
