@@ -134,12 +134,27 @@ dialog::backdrop{background:rgba(10,18,26,.55)}
     var c = ev.target.closest('.clickable'); if (c) openInfo(+c.dataset.i);
   });
   app.addEventListener('keydown', function (ev) { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('clickable')) { ev.preventDefault(); openInfo(+ev.target.dataset.i); } });
+  var catalog = null;
+  function loadCatalog() { return catalog || (catalog = fetch('/data/exercises.json').then(function (r) { return r.json(); }).catch(function () { return []; })); }
+  var cap = function (t) { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); };
+  function fallbackInfo(r) {
+    return loadCatalog().then(function (list) {
+      var n = String(r.name || '').toLowerCase(), e = null, i;
+      for (i = 0; i < list.length; i++) { if ((r.id && list[i].id === r.id) || String(list[i].name).toLowerCase() === n) { e = list[i]; break; } }
+      if (!e) return {};
+      var ins = e.instructions; if (ins && typeof ins === 'object') ins = ins.en || '';
+      var sec = Array.isArray(e.secondary_muscles) ? e.secondary_muscles : String(e.secondary_muscles || '').split(',');
+      return { prim: cap(e.target), sec: sec.map(function (x) { return cap(String(x).trim()); }).filter(Boolean).join(', '), chips: [e.target, e.body_part, e.equipment].filter(Boolean), ins: String(ins || '') };
+    });
+  }
   function openInfo(i) {
-    var r = ((data.days || [])[day] || { rows: [] }).rows[i]; if (!r) return; var f = r.info || {}, u = safeImg(r.gif) || safeImg(r.img);
-    document.getElementById('dT').textContent = r.name;
-    var chips = (f.chips || []).map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
+    var r = ((data.days || [])[day] || { rows: [] }).rows[i]; if (!r) return;
+    document.getElementById('dT').textContent = r.name; document.getElementById('dB').innerHTML = '<p class="count">Loading…</p>'; document.getElementById('dlg').showModal();
+    (r.info && r.info.ins !== undefined ? Promise.resolve(r.info) : fallbackInfo(r)).then(function (f) { fillInfo(r, f || {}); });
+  }
+  function fillInfo(r, f) {
+    var u = safeImg(r.gif) || safeImg(r.img), chips = (f.chips || []).map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
     document.getElementById('dB').innerHTML = '<div class="xvrow"><div class="xvimg">' + (u ? '<img src="' + esc(src(u)) + '" alt="' + esc(r.name) + '">' : '<p class="count">No picture for this exercise.</p>') + '</div><div class="xvmus"><p class="mgrp"><b>Primary:</b> ' + esc(f.prim || 'none') + '</p><p class="mgrp"><b>Secondary:</b> ' + esc(f.sec || 'none') + '</p>' + (f.other ? '<p class="mgrp count ndraw">Not drawn on the figure: ' + esc(f.other) + '</p>' : '') + '</div></div><div class="xvdesc">' + (chips ? '<div class="chips">' + chips + '</div>' : '') + (f.ins ? '<h3>Instructions</h3><p>' + esc(f.ins) + '</p>' : '') + '</div>';
-    document.getElementById('dlg').showModal();
   }
   document.getElementById('dX').onclick = function () { document.getElementById('dlg').close(); };
   document.getElementById('dlg').addEventListener('click', function (ev) { if (ev.target === this) this.close(); });
