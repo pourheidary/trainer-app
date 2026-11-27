@@ -228,6 +228,30 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.79
+- Student edit form, fixed widths: Birth date 128 px (calendar icon right next to the date), Sex 84 px (just the word Female), Blood 64 px (just the word Blood), and Body type takes all the remaining width (on phones it gets its own full-width line).
+
+## v1.78
+- Photo crop: the square starts at the largest size that fits the picture.
+- Student edit form: the Birth date box is just wide enough for the longest date (the text no longer runs under the calendar icon); the blood type box is narrow and its title is just "Blood".
+
+## v1.77
+- Photo crop redone: the whole picture is shown with a square frame (with a circle guide inside). Drag the frame to move it, drag a corner to make it smaller or bigger (or use the scroll wheel), then Use photo.
+- Student edit form: Sex moved from the header to the row after Birth date, the Age box is removed (age still shows in the student summary), and the Birth date box is narrower.
+
+## v1.76
+- Take photo now works on a computer: it opens the webcam in a small window with a Capture button, then goes to the crop step. On phones and tablets it still opens the device camera. If the browser blocks the camera, a message suggests Choose photo.
+- The camera symbol is now a semi-transparent overlay centred on the face / photo instead of a badge in the corner.
+- Student edit header: the first line sits at the same distance from the top as on the other pages.
+- The sex drop-down is narrower (88 px).
+
+## v1.75
+- Student edit mode: the photo / face now sits in the header in front of the name, at the same 48 px size as in view mode, with a small camera badge. Clicking it opens a menu: Take photo, Choose photo (and Remove photo once a photo exists). The sex drop-down sits after the name. The separate photo row is removed.
+
+## v1.74
+- Student edit mode: sex is now a drop-down (Male / Female) instead of two icon buttons.
+- Student photo: choose a picture from the gallery or take one with the camera, then crop it (drag to move, pinch / scroll / slider to zoom). The cropped 256 px photo is saved with the student and shown in the students list and in the student header; students without a photo keep the default male / female face. Remove photo returns to the default. Nothing is stored until the tick is pressed, like the other fields.
+
 ## v1.73
 - A cross now always means cancel or close. The two round delete buttons that used a cross (the program card on the student page and the exercise row in plan edit mode) now show a trash can in the same red circle.
 
