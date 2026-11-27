@@ -228,6 +228,28 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.91
+- Program dialog: right-hand corners are rounded like the left ones (the scrollbar no longer squares them off; scrolling now happens inside the rounded frame).
+
+## v1.91
+- All popups: corners stay rounded when the popup scrolls (the scrollbar no longer squares off the right corners).
+
+## v1.90
+- Program dialog: the change-program dropdown and the ✕ now sit outside (above) the editor frame, in the popup's top row.
+- Added a ✓ (Save changes) button next to the ✕.
+
+## v1.89
+- Program dialog width restored (860px on desktop); only the change-program dropdown is limited to 414px, on the same row as the ✕.
+
+## v1.88
+- Program dialog: removed the "Change program" label; the dropdown now shares the ✕ row. Dialog width is 414px like Edit details.
+- The notice text "Editing <name>’s own copy of this program." is red.
+
+## v1.87
+- Magnifier icon added to the search boxes (Exercises, Students, Plans, exercise picker).
+- Program dialog: "Change program" label now shares the top row with the ✕, removing the extra gap at the top.
+- Fixed the program dialog overflowing to the right on narrow screens (✕ and fields were cut off).
+
 ## v1.86
 - Program dialog: the ✕ (cancel) moved to the top-right corner of the popup.
 - Notice now only says "Editing <name>’s own copy of this program."
