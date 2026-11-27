@@ -228,6 +228,31 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.73
+- A cross now always means cancel or close. The two round delete buttons that used a cross (the program card on the student page and the exercise row in plan edit mode) now show a trash can in the same red circle.
+
+## v1.72
+- Exercises: the Edit exercise button is now a pencil icon beside the close cross in the top right (like the Students and Plan pages) and is removed from below the description.
+
+## v1.71
+- Exercises: the close button uses the same 18 px icon (and the same smaller size on phones) as the Students one.
+- Plan view mode: new close (cross) button as the last button on the right. The header now looks like a plan in the right-hand list: the body figures on the left, and the name, "N days · level" and goal on the right with the same text sizes. The separate Level / Goal / Days / For line is removed from view mode (edit mode is unchanged).
+
+## v1.70
+- First line of the left panel now sits at the same distance from the top and right edge as on the Plan page: the Students view header buttons moved up 9 px (top 25 px, like Plan), and the Exercises panel's close button and name now share one 44 px line 25 px from the top and right edges.
+
+## v1.69
+- Students and Exercises pages can now be emptied like the Plan page: clicking the selected item again closes it, a new cross (close) button sits in the detail panel, and Escape closes it too (Escape does nothing while a student is being edited, while a dialog or date popup is open, or while typing in a field).
+
+## v1.68
+- Filter drop-downs (Exercises and Plan pages) have their arrow 14 px from the edge instead of sitting against it.
+- Plan filters: search + days, muscle + body part, level + goal each share one line.
+- The search boxes' placeholder is now just "Search" so it fits the shorter field.
+- Exercises filters: search + equipment, muscle + body part each share one line.
+
+## v1.67
+- Plan page: the filters (search, days, muscle, body part, level, goal) moved from the full-width bar into the top of the plans column, under the "Plans" title, the same way the Exercises page does it.
+
 ## v1.66
 - Website: defaults.json can now carry a "reset" token. When a browser sees a token it has not applied yet, it deletes all its students and plans once and loads exactly the default students and plans from defaults.json (exercise edits are untouched). Later edits are kept until the next new token.
 
