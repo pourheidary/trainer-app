@@ -37,7 +37,9 @@ h1,h2,h3{margin:0}
 .tabs button[aria-selected='true']{background:var(--surface);font-weight:600;border-bottom-color:var(--accent)}
 .dtitle{color:var(--accent);font-weight:600;margin:0 0 12px;text-transform:capitalize}
 .dsum{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid var(--line)}
-.dsum .txt{flex:1 1 220px;min-width:0}
+.dsum{flex-wrap:nowrap;align-items:center;gap:14px}
+.dsum .txt{flex:1 1 auto;min-width:0}
+.dfig{flex:none;width:64px;height:64px;object-fit:contain;display:block}
 .figs{display:flex;gap:8px;align-items:flex-end}
 .figs svg{display:block}
 .mh{font-size:1.05rem;margin:0 0 10px}
@@ -125,7 +127,7 @@ dialog::backdrop{background:rgba(10,18,26,.55)}
     }).join('');
     box.innerHTML =
       (d.title ? '<p class="dtitle">' + esc(d.title) + '</p>' : '') +
-      (d.rows.length && (d.prim || d.sec) ? '<div class="dsum"><div class="txt"><h3 class="mh">Muscles trained <span class="exc">(' + d.rows.length + ' exercise' + (d.rows.length === 1 ? '' : 's') + ')</span></h3>' + (d.prim ? '<p class="mgrp"><span class="sw" style="background:#1f5fd6"></span><b>Primary:</b> ' + esc(d.prim) + '</p>' : '') + (d.sec ? '<p class="mgrp"><span class="sw" style="background:#8fb4f5"></span><b>Secondary:</b> ' + esc(d.sec) + '</p>' : '') + '</div></div>' : '') +
+      (d.rows.length && (d.prim || d.sec) ? '<div class="dsum">' + (safeImg(d.fig) ? '<img class="dfig" src="' + esc(d.fig) + '" alt="Muscles trained on this day" width="64" height="64">' : '') + '<div class="txt"><h3 class="mh">Muscles trained <span class="exc">(' + d.rows.length + ' exercise' + (d.rows.length === 1 ? '' : 's') + ')</span></h3>' + (d.prim ? '<p class="mgrp"><span class="sw" style="background:#1f5fd6"></span><b>Primary:</b> ' + esc(d.prim) + '</p>' : '') + (d.sec ? '<p class="mgrp"><span class="sw" style="background:#8fb4f5"></span><b>Secondary:</b> ' + esc(d.sec) + '</p>' : '') + '</div></div>' : '') +
       (d.rows.length ? '<div class="srhead"><span>Exercise</span><span>Sets × Reps</span></div>' + rows + '<p class="count">' + d.rows.length + ' exercise' + (d.rows.length === 1 ? '' : 's') + ' · ' + sets + ' sets</p>' : '<p class="count">No exercises on this day.</p>');
   }
 
