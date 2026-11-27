@@ -228,6 +228,22 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.95
+- Calendar popup is the same minimum width everywhere (Assign program and Edit details were ~60px wider because their selects used the native arrow).
+
+## v1.94
+- Calendar popup: Today is a full-width row; Cancel and Save are equal-width on one line under it (always).
+- Students list: removed the white ring between the photo and the colored progress ring (the list's generic image style was giving student photos a white background, border and wrong size).
+
+## v1.93
+- New student: the Assign program button turns on as soon as a name is typed; clicking it saves the student and opens the assign dialog.
+- Assign program / Edit details: "Program given on" and "Follow-up after" now come before New Assessment.
+- Calendar popup: year, month and day boxes are as narrow as their text; Cancel and Save buttons sit below (Today stays on that row where it applies). The date is applied only on Save.
+
+## v1.92
+- Student photo ring is now a progress ring: it fills clockwise (green, orange when due within 2 days, red when due/overdue) with the share of the follow-up period that has passed; grey when the program has no follow-up. Applies to the Students list and the student header.
+- Removed the white outline around student photos in the right-hand Students list.
+
 ## v1.91
 - Program dialog: right-hand corners are rounded like the left ones (the scrollbar no longer squares them off; scrolling now happens inside the rounded frame).
 
