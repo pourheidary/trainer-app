@@ -16,8 +16,12 @@ main{max-width:720px;margin:0 auto;display:grid;gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
 h1,h2,h3{margin:0}
 .hello{display:flex;gap:14px;align-items:center}
-.av{flex:none;width:64px;height:64px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:700;font-size:1.5rem;color:var(--accent);overflow:hidden;border:3px solid var(--accent)}
-.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av{flex:none;width:64px;height:64px;border-radius:50%;padding:3px;background:var(--line);overflow:hidden}
+.av[data-st='ok']{background:conic-gradient(#2e9e5b calc(var(--p)*1%),var(--line) 0)}
+.av[data-st='soon']{background:conic-gradient(#e8a317 calc(var(--p)*1%),var(--line) 0)}
+.av[data-st='late']{background:conic-gradient(#d93a3f calc(var(--p)*1%),var(--line) 0)}
+.avi{width:100%;height:100%;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:700;font-size:1.5rem;color:var(--accent);overflow:hidden}
+.avi img{width:100%;height:100%;object-fit:cover;display:block}
 .hello small{display:block;color:var(--mute);font-size:.9rem}
 .hello h1{font-size:1.4rem;line-height:1.2;overflow-wrap:anywhere}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
@@ -41,36 +45,55 @@ h1,h2,h3{margin:0}
 .mgrp{margin:0 0 6px;font-size:.92rem}
 .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .srhead{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;color:var(--mute);padding:8px 0 0}
-.row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
-.row:last-child{border-bottom:0}
-.row .num{flex:none;min-width:30px;height:24px;padding:0 6px;border-radius:12px;background:var(--soft);color:var(--mute);font-weight:700;font-size:.8rem;display:inline-grid;place-items:center}
-.row[data-pos='first'],.row[data-pos='mid'],.row[data-pos='last']{border-left:4px solid var(--ss,#f08c00);padding-left:12px}
+.row{display:grid;gap:2px;padding:8px 0 8px 8px;border-bottom:1px solid var(--line)}
+.row:last-of-type{border-bottom:0}
+.row[data-pos='first'],.row[data-pos='mid'],.row[data-pos='last']{border-left:4px solid var(--ss,#f08c00);padding-left:4px}
+.r1{display:flex;gap:8px;align-items:center}
+.clickable{flex:1 1 auto;min-width:0;display:flex;gap:8px;align-items:center;cursor:pointer;border-radius:8px}
+.clickable:hover .rn{text-decoration:underline}
+.num{flex:none;min-width:28px;height:24px;padding:0 6px;border-radius:12px;background:var(--soft);color:var(--mute);font-weight:700;font-size:.8rem;display:inline-grid;place-items:center}
 .row[data-pos='first'] .num,.row[data-pos='mid'] .num,.row[data-pos='last'] .num{background:var(--ss,#f08c00);color:#fff}
-.row .pic{flex:none;width:48px;height:48px;padding:0;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden;cursor:zoom-in}
-.row .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.rn{flex:1 1 auto;min-width:0;font-weight:500;text-transform:capitalize;overflow-wrap:anywhere}
-.sr{flex:none;font-weight:700;white-space:nowrap}
+.pic,.ph{flex:none;width:48px;height:48px;border-radius:8px;object-fit:cover;background:#fff;border:1px solid var(--line);display:block}
+.rn{flex:1 1 auto;min-width:0;font-weight:500;line-height:1.3;text-transform:capitalize;overflow-wrap:anywhere}
+.sr{flex:none;min-width:0;font-size:.92rem;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
 .count{color:var(--mute);font-size:.9rem;margin:10px 0 0}
 .msg{text-align:center;padding:36px 18px}
 .msg h2{font-size:1.2rem;margin-bottom:8px}
 .msg p{margin:0;color:var(--mute)}
 .foot{text-align:center;color:var(--mute);font-size:.8rem;margin:6px 0 0}
-dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:min(420px,94vw);padding:16px;max-height:92vh;overflow:auto;clip-path:inset(0 round 14px)}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:fit-content;min-width:min(340px,94vw);max-width:min(560px,94vw);padding:0;max-height:92vh;overflow:auto;clip-path:inset(0 round 14px)}
 dialog::backdrop{background:rgba(10,18,26,.55)}
-dialog img{display:block;width:100%;height:auto;border-radius:10px;background:#fff}
-dialog h3{margin:0 0 10px;text-transform:capitalize;font-size:1.05rem;overflow-wrap:anywhere}
-dialog button{margin-top:12px;width:100%;min-height:44px;font:inherit;border:0;border-radius:8px;background:var(--soft);color:var(--ink);cursor:pointer}
+.dlg{padding:16px}
+.dh{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.dh h2{margin:0;flex:1;font-size:1.25rem;line-height:1.25;text-transform:capitalize;overflow-wrap:anywhere}
+.ibtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;font-size:1rem;cursor:pointer}
+.xvrow{display:flex;gap:22px;align-items:flex-end;flex-wrap:wrap}
+.xvimg{flex:none;max-width:100%;align-self:flex-start}
+.xvimg img{display:block;width:auto;max-width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--line)}
+.xvmus{flex:1 1 220px;min-width:0;align-self:flex-end}
+.xvmus .mgrp:last-child{margin-bottom:0}
+.xvdesc{margin-top:14px}
+.xvdesc .chips{margin:0 0 14px}
+.xvdesc h3{font-size:1.05rem;margin:0 0 6px}
+.xvdesc p{margin:0;white-space:pre-line}
+.ndraw{color:var(--mute);font-size:.85rem}
 </style>
 </head>
 <body>
 <main id="app"><div class="card msg"><p>Loading your program…</p></div></main>
-<dialog id="dlg"><h3 id="dT"></h3><img id="dI" alt=""><button type="button" id="dX">Close</button></dialog>
+<dialog id="dlg"><div class="dlg"><div class="dh"><h2 id="dT"></h2><button type="button" class="ibtn" id="dX" aria-label="Close">&#10005;</button></div><div id="dB"></div></div></dialog>
 <script>
 (function () {
   var app = document.getElementById('app'), data = null, day = 0;
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var safeImg = function (u) { u = String(u || ''); return /^(images|videos)\/[\w.\-]+$/.test(u) || /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u) ? u : ''; };
   var src = function (u) { return /^(images|videos)\//.test(u) ? '/' + u : u; };
+  var followUp = function (p) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.date || ''), dur = +p.dur; if (!m || !(dur > 0)) return { st: '', p: 0 };
+    var t = new Date(); t.setHours(0, 0, 0, 0); var due = new Date(+m[1], +m[2] - 1, +m[3]); due.setDate(due.getDate() + dur);
+    var left = Math.round((due - t) / 864e5), pc = Math.max(0, Math.min(100, Math.round((1 - left / dur) * 100)));
+    return { st: left <= 0 ? 'late' : left <= 2 ? 'soon' : 'ok', p: left <= 0 ? 100 : pc };
+  };
   var fmtDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); if (!m) return ''; return +m[3] + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + m[1]; };
   var tehranDate = function (ms) { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tehran', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms)); } catch (e) { return ''; } };
 
@@ -79,14 +102,14 @@ dialog button{margin-top:12px;width:100%;min-height:44px;font:inherit;border:0;b
   function render() {
     var s = data.student || {}, p = data.program || {}, days = data.days || [];
     var first = String(s.name || '').trim().split(/\s+/)[0] || 'there';
-    var av = safeImg(s.photo) ? '<img src="' + esc(s.photo) + '" alt="">' : esc(first.charAt(0).toUpperCase());
+    var av = safeImg(s.photo) ? '<img src="' + esc(s.photo) + '" alt="">' : '<img src="/avatars/' + (s.sex === 'Female' ? 'female' : 'male') + '.webp" alt="">', fu = followUp(p);
     var facts = [['Age', s.age ? s.age + ' y' : ''], ['Height', s.height ? s.height + ' cm' : ''], ['Weight', s.weight ? s.weight + ' kg' : ''], ['BMI', s.bmi || ''], ['Body type', String(s.bodyType || '').replace(/\s*\(.*\)/, '')]]
       .filter(function (f) { return f[1]; }).map(function (f) { return '<div><span>' + f[0] + '</span><b>' + esc(f[1]) + '</b></div>'; }).join('');
     var chips = [p.days ? p.days + ' day' + (p.days === 1 ? '' : 's') + ' / week' : '', p.level, p.goal].filter(Boolean).map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
     var valid = (p.date ? 'Given on <b>' + esc(fmtDate(p.date)) + '</b>' : '') + (p.until ? (p.date ? ' · ' : '') + 'Valid until <b>' + esc(fmtDate(p.until)) + '</b>' : '');
     var tabs = days.map(function (d, i) { return '<button type="button" role="tab" data-d="' + i + '" aria-selected="' + (i === day) + '">Day ' + (i + 1) + '</button>'; }).join('');
     app.innerHTML =
-      '<section class="card"><div class="hello"><div class="av">' + av + '</div><div><small>Prepared for you</small><h1>Hi, ' + esc(first) + '!</h1></div></div>' + (facts ? '<div class="facts">' + facts + '</div>' : '') + '</section>' +
+      '<section class="card"><div class="hello"><div class="av" role="img" aria-label="' + (fu.st ? fu.p + '% of the program period has passed' : 'Student') + '" data-st="' + fu.st + '" style="--p:' + fu.p + '"><div class="avi">' + av + '</div></div><div><small>Prepared for you</small><h1>Hi, ' + esc(first) + '!</h1></div></div>' + (facts ? '<div class="facts">' + facts + '</div>' : '') + '</section>' +
       '<section class="card"><h2 class="pname">' + esc(p.name || 'Your program') + '</h2>' + (chips ? '<div class="chips">' + chips + '</div>' : '') + (valid ? '<p class="valid">' + valid + '</p>' : '') + '</section>' +
       '<section class="card"><div class="tabs" role="tablist" aria-label="Training days">' + tabs + '</div><div id="day"></div></section>' +
       '<p class="foot">Your trainer keeps this page up to date. Check it before every session.</p>';
@@ -96,11 +119,9 @@ dialog button{margin-top:12px;width:100%;min-height:44px;font:inherit;border:0;b
   function renderDay() {
     var d = (data.days || [])[day] || { rows: [] }, box = document.getElementById('day');
     var sets = d.rows.reduce(function (a, r) { return a + (+r.sets || 0); }, 0);
-    var rows = d.rows.map(function (r) {
-      var im = safeImg(r.img);
-      return '<div class="row" data-pos="' + esc(r.pos || 'single') + '"' + (r.color ? ' style="--ss:' + esc(r.color) + '"' : '') + '><span class="num">' + esc(r.label) + '</span>' +
-        (im ? '<button type="button" class="pic" data-g="' + esc(src(safeImg(r.gif) || im)) + '" data-n="' + esc(r.name) + '" aria-label="Show ' + esc(r.name) + '"><img src="' + esc(src(im)) + '" alt="" loading="lazy"></button>' : '<span class="pic"></span>') +
-        '<span class="rn">' + esc(r.name) + '</span><span class="sr">' + esc(r.sets) + ' × ' + esc(r.reps) + '</span></div>';
+    var rows = d.rows.map(function (r, i) {
+      var im = safeImg(r.img), pic = im ? '<img class="pic" src="' + esc(src(im)) + '" alt="" loading="lazy">' : '<span class="ph"></span>';
+      return '<div class="row" data-pos="' + esc(r.pos || 'single') + '"' + (r.color ? ' style="--ss:' + esc(r.color) + '"' : '') + '><div class="r1"><div class="clickable" data-i="' + i + '" tabindex="0" role="button" aria-label="Show details of ' + esc(r.name) + '"><span class="num">' + esc(r.label) + '</span>' + pic + '<span class="rn">' + esc(r.name) + '</span></div><span class="sr">' + esc(r.sets) + ' \u00d7 ' + esc(r.reps) + '</span></div></div>';
     }).join('');
     box.innerHTML =
       (d.title ? '<p class="dtitle">' + esc(d.title) + '</p>' : '') +
@@ -110,8 +131,16 @@ dialog button{margin-top:12px;width:100%;min-height:44px;font:inherit;border:0;b
 
   app.addEventListener('click', function (ev) {
     var t = ev.target.closest('[data-d]'); if (t) { day = +t.dataset.d; app.querySelectorAll('[data-d]').forEach(function (b) { b.setAttribute('aria-selected', String(+b.dataset.d === day)); }); renderDay(); return; }
-    var g = ev.target.closest('[data-g]'); if (g) { document.getElementById('dT').textContent = g.dataset.n; document.getElementById('dI').src = g.dataset.g; document.getElementById('dlg').showModal(); }
+    var c = ev.target.closest('.clickable'); if (c) openInfo(+c.dataset.i);
   });
+  app.addEventListener('keydown', function (ev) { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('clickable')) { ev.preventDefault(); openInfo(+ev.target.dataset.i); } });
+  function openInfo(i) {
+    var r = ((data.days || [])[day] || { rows: [] }).rows[i]; if (!r) return; var f = r.info || {}, u = safeImg(r.gif) || safeImg(r.img);
+    document.getElementById('dT').textContent = r.name;
+    var chips = (f.chips || []).map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
+    document.getElementById('dB').innerHTML = '<div class="xvrow"><div class="xvimg">' + (u ? '<img src="' + esc(src(u)) + '" alt="' + esc(r.name) + '">' : '<p class="count">No picture for this exercise.</p>') + '</div><div class="xvmus"><p class="mgrp"><b>Primary:</b> ' + esc(f.prim || 'none') + '</p><p class="mgrp"><b>Secondary:</b> ' + esc(f.sec || 'none') + '</p>' + (f.other ? '<p class="mgrp count ndraw">Not drawn on the figure: ' + esc(f.other) + '</p>' : '') + '</div></div><div class="xvdesc">' + (chips ? '<div class="chips">' + chips + '</div>' : '') + (f.ins ? '<h3>Instructions</h3><p>' + esc(f.ins) + '</p>' : '') + '</div>';
+    document.getElementById('dlg').showModal();
+  }
   document.getElementById('dX').onclick = function () { document.getElementById('dlg').close(); };
   document.getElementById('dlg').addEventListener('click', function (ev) { if (ev.target === this) this.close(); });
 
