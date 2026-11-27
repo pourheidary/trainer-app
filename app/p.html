@@ -24,8 +24,10 @@ h1,h2,h3{margin:0}
 .avi img{width:100%;height:100%;object-fit:cover;display:block}
 .hello small{display:block;color:var(--mute);font-size:.9rem}
 .hello h1{font-size:1.4rem;line-height:1.2;overflow-wrap:anywhere}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.facts div{display:grid;gap:2px;font-size:.85rem;color:var(--mute)}
+.facts{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.facts div{display:grid;gap:2px;font-size:.85rem;color:var(--mute);min-width:0;white-space:nowrap}
+.bt{margin:10px 0 0;font-size:.9rem;color:var(--mute)}.bt b{color:var(--ink);font-weight:600}
+@media (max-width:360px){.facts div{font-size:.78rem}.facts b{font-size:.92rem}}
 .facts b{color:var(--ink);font-size:1rem;font-weight:600}
 .pname{font-size:1.3rem;text-transform:capitalize;overflow-wrap:anywhere}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
@@ -105,16 +107,16 @@ dialog::backdrop{background:rgba(10,18,26,.55)}
     var s = data.student || {}, p = data.program || {}, days = data.days || [];
     var first = String(s.name || '').trim().split(/\s+/)[0] || 'there';
     var av = safeImg(s.photo) ? '<img src="' + esc(s.photo) + '" alt="">' : '<img src="/avatars/' + (s.sex === 'Female' ? 'female' : 'male') + '.webp" alt="">', fu = followUp(p);
-    var facts = [['Age', s.age ? s.age + ' y' : ''], ['Height', s.height ? s.height + ' cm' : ''], ['Weight', s.weight ? s.weight + ' kg' : ''], ['BMI', s.bmi || ''], ['Body type', String(s.bodyType || '').replace(/\s*\(.*\)/, '')]]
-      .filter(function (f) { return f[1]; }).map(function (f) { return '<div><span>' + f[0] + '</span><b>' + esc(f[1]) + '</b></div>'; }).join('');
+    var facts = [['Age', s.age ? s.age + ' y' : ''], ['Height', s.height ? s.height + ' cm' : ''], ['Weight', s.weight ? s.weight + ' kg' : ''], ['BMI', s.bmi || '']]
+      .filter(function (f) { return f[1]; }).map(function (f) { return '<div><span>' + f[0] + '</span><b>' + esc(f[1]) + '</b></div>'; }).join(''), bt = String(s.bodyType || '').replace(/\s*\(.*\)/, '');
     var chips = [p.days ? p.days + ' day' + (p.days === 1 ? '' : 's') + ' / week' : '', p.level, p.goal].filter(Boolean).map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
     var valid = (p.date ? 'Given on <b>' + esc(fmtDate(p.date)) + '</b>' : '') + (p.until ? (p.date ? ' · ' : '') + 'Valid until <b>' + esc(fmtDate(p.until)) + '</b>' : '');
     var tabs = days.map(function (d, i) { return '<button type="button" role="tab" data-d="' + i + '" aria-selected="' + (i === day) + '">Day ' + (i + 1) + '</button>'; }).join('');
     app.innerHTML =
-      '<section class="card"><div class="hello"><div class="av" role="img" aria-label="' + (fu.st ? fu.p + '% of the program period has passed' : 'Student') + '" data-st="' + fu.st + '" style="--p:' + fu.p + '"><div class="avi">' + av + '</div></div><div><small>Prepared for you</small><h1>Hi, ' + esc(first) + '!</h1></div></div>' + (facts ? '<div class="facts">' + facts + '</div>' : '') + '</section>' +
+      '<section class="card"><div class="hello"><div class="av" role="img" aria-label="' + (fu.st ? fu.p + '% of the program period has passed' : 'Student') + '" data-st="' + fu.st + '" style="--p:' + fu.p + '"><div class="avi">' + av + '</div></div><div><small>Prepared for you</small><h1>Hi, ' + esc(first) + '!</h1></div></div>' + (facts ? '<div class="facts">' + facts + '</div>' : '') + (bt ? '<p class="bt">Body type: <b>' + esc(bt) + '</b></p>' : '') + '</section>' +
       '<section class="card"><h2 class="pname">' + esc(p.name || 'Your program') + '</h2>' + (chips ? '<div class="chips">' + chips + '</div>' : '') + (valid ? '<p class="valid">' + valid + '</p>' : '') + '</section>' +
       '<section class="card"><div class="tabs" role="tablist" aria-label="Training days">' + tabs + '</div><div id="day"></div></section>' +
-      '<p class="foot">Your trainer keeps this page up to date. Check it before every session.</p>';
+      '<p class="foot">Your trainer keeps this page up to date.<br>Check it before every session.</p>';
     renderDay();
   }
 
