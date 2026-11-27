@@ -1,11 +1,11 @@
 // Cloudflare Worker: share links for assigned programs.
 // Routes
-//   POST   /api/links          (auth)  body {data, exp?}      -> {id}
-//   PUT    /api/links/:id      (auth)  body {data, exp?}      -> {ok:true}
-//   DELETE /api/links/:id      (auth)                          -> {ok:true}
+//   POST   /api/links          body {data, exp?}      -> {id, token}   (open: no key needed)
+//   PUT    /api/links/:id      header x-edit-token, body {data, exp?}  -> {ok:true}
+//   DELETE /api/links/:id      header x-edit-token                      -> {ok:true}
 //   GET    /api/links/:id      (public)                        -> {data, exp}  | 404 | 410 (expired)
 //   GET    /p/:id              (public)                        -> the student page (p.html)
-// KV binding: LINKS.  Secret: ADMIN_KEY (the trainer's key).
+// KV binding: LINKS. Each link gets a random edit token when created; only the app that created it can change or delete it.
 const MAX_BODY = 3 * 1024 * 1024;
 const J = (o, status = 200, extra = {}) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...extra } });
 const ID_RE = /^[A-Za-z0-9_-]{20,40}$/;
@@ -22,11 +22,7 @@ function safeEqual(a, b) {
   for (let i = 0; i < n; i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
   return d === 0;
 }
-function authed(req, env) {
-  const h = req.headers.get('authorization') || '';
-  const k = h.startsWith('Bearer ') ? h.slice(7) : '';
-  return !!env.ADMIN_KEY && safeEqual(k, env.ADMIN_KEY);
-}
+const tokenOk = (req, rec) => !!rec.token && safeEqual(req.headers.get('x-edit-token') || '', rec.token);
 async function readBody(req) {
   const len = +req.headers.get('content-length') || 0;
   if (len > MAX_BODY) return { err: J({ error: 'too_large' }, 413) };
@@ -47,8 +43,8 @@ function ttlFor(exp) {
   const s = Math.ceil((exp - Date.now()) / 1000) + 86400;
   return Math.max(60, s);
 }
-async function put(env, id, data, exp, created) {
-  const rec = { v: 1, created: created || Date.now(), updated: Date.now(), exp, data };
+async function put(env, id, data, exp, created, token) {
+  const rec = { v: 2, created: created || Date.now(), updated: Date.now(), exp, token, data };
   const opts = {}; const t = ttlFor(exp); if (t) opts.expirationTtl = t;
   await env.LINKS.put('l:' + id, JSON.stringify(rec), opts);
 }
@@ -58,10 +54,9 @@ export default {
     const url = new URL(req.url), path = url.pathname;
 
     if (path === '/api/links' && req.method === 'POST') {
-      if (!authed(req, env)) return J({ error: 'unauthorized' }, 401);
       const r = await readBody(req); if (r.err) return r.err;
-      const id = randomId(); await put(env, id, r.data, r.exp);
-      return J({ id }, 201);
+      const id = randomId(), token = randomId() + randomId(); await put(env, id, r.data, r.exp, null, token);
+      return J({ id, token }, 201);
     }
 
     const m = /^\/api\/links\/([^/]+)$/.exec(path);
@@ -74,20 +69,18 @@ export default {
         if (rec.exp !== null && rec.exp !== undefined && Date.now() >= rec.exp) return J({ error: 'expired', exp: rec.exp }, 410);
         return J({ data: rec.data, exp: rec.exp ?? null });
       }
-      if (!authed(req, env)) return J({ error: 'unauthorized' }, 401);
+      if (req.method !== 'PUT' && req.method !== 'DELETE') return J({ error: 'method_not_allowed' }, 405);
+      const raw = await env.LINKS.get('l:' + id);
+      if (!raw) return J({ error: 'not_found' }, 404);
+      const rec = JSON.parse(raw);
+      if (!tokenOk(req, rec)) return J({ error: 'unauthorized' }, 401);
       if (req.method === 'PUT') {
-        const raw = await env.LINKS.get('l:' + id);
-        if (!raw) return J({ error: 'not_found' }, 404);
         const r = await readBody(req); if (r.err) return r.err;
-        await put(env, id, r.data, r.exp, JSON.parse(raw).created);
+        await put(env, id, r.data, r.exp, rec.created, rec.token);
         return J({ ok: true });
       }
-      if (req.method === 'DELETE') { await env.LINKS.delete('l:' + id); return J({ ok: true }); }
+      await env.LINKS.delete('l:' + id); return J({ ok: true });
       return J({ error: 'method_not_allowed' }, 405);
-    }
-
-    if (path === '/api/ping' && req.method === 'GET') {
-      return authed(req, env) ? J({ ok: true }) : J({ error: 'unauthorized' }, 401);
     }
 
     if (/^\/p\/[^/]+\/?$/.test(path)) {
