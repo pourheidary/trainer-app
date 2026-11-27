@@ -228,6 +228,23 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.82
+- Dialog title first line is smaller and sits closer to the student name.
+- Body crop ellipse now touches the top and bottom of the crop rectangle.
+
+## v1.81
+- Photo slot labels (Front/Back/Side) now sit above the photo boxes.
+- Body crop guide is a centred ellipse instead of a figure.
+- Notes box is a single line.
+- Dialog titles: small first line "Program details for:" / "Assign a program to:" with the student name below.
+- Edit details no longer shows the Program line.
+
+## v1.80
+- Body photos: Assign program and Edit details of every program card now have three photo slots (Front, Back, Side). Each slot opens a menu: Take photo, Choose photo, Remove photo. After choosing, a crop frame with a 1 : 2 (width : height) rectangle and a human-body outline appears; drag it to move, drag a corner (or scroll) to resize it. Saved with the program card (240 x 480 px).
+- Program card: the photos show above the "171 cm · 89 kg · BMI ..." line, at the same height (64 px) as the body figures above; tap one to see it large.
+- Assessments: new Photos tab after BMI, with a Front / Back / Side selector, to compare the photos of every assessment side by side by date.
+- The crop frame code now also supports a rectangle; the webcam preview shows the whole camera picture.
+
 ## v1.79
 - Student edit form, fixed widths: Birth date 128 px (calendar icon right next to the date), Sex 84 px (just the word Female), Blood 64 px (just the word Blood), and Body type takes all the remaining width (on phones it gets its own full-width line).
 
