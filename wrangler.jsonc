@@ -11,6 +11,6 @@
     "run_worker_first": ["/api/*", "/p/*"]
   },
   "kv_namespaces": [
-    { "binding": "LINKS" }
+    { "binding": "LINKS", "id": "0611ad63c7e54d96b01fcc615cbf79e6" }
   ]
 }
