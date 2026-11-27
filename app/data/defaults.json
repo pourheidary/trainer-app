@@ -6,8 +6,8 @@
    "sex": "Male",
    "age": "40",
    "blood": "",
-   "height": "168",
-   "weight": "92",
+   "height": "171",
+   "weight": "89",
    "bodyType": "",
    "dur": "",
    "start": "",
@@ -143,6 +143,232 @@
      "dur": "",
      "date": "2026-11-17",
      "notes": ""
+    },
+    {
+     "id": "amwxigcxw",
+     "planId": "p1794485967744",
+     "planName": "Aghaye2",
+     "plan": {
+      "id": "amwxigcxw",
+      "name": "Aghaye2",
+      "days": 2,
+      "level": "Beginner",
+      "goal": "Muscle building",
+      "titles": [],
+      "routines": [
+       [
+        {
+         "id": "0003",
+         "n": "air bike",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 2,
+         "reps": "10"
+        },
+        {
+         "id": "1512",
+         "n": "all fours squad stretch",
+         "t": "quads",
+         "s": "hamstrings, glutes",
+         "b": "upper legs",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t1"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 7,
+         "reps": "10",
+         "ss": "gmwkijw0t1"
+        },
+        {
+         "id": "3294",
+         "n": "archer push up",
+         "t": "pectorals",
+         "s": "triceps, shoulders, core",
+         "b": "chest",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t2"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t2"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t3"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t3"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        }
+       ],
+       [
+        {
+         "id": "0003",
+         "n": "air bike",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "3293",
+         "n": "archer pull up",
+         "t": "lats",
+         "s": "biceps, forearms",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "3204",
+         "n": "arms overhead full sit-up (male)",
+         "t": "abs",
+         "s": "hip flexors, lower back",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1314",
+         "n": "back extension on exercise ball",
+         "t": "spine",
+         "s": "glutes, hamstrings",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1473",
+         "n": "backward jump",
+         "t": "quads",
+         "s": "hamstrings, glutes, calves",
+         "b": "upper legs",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0010",
+         "n": "assisted hanging knee raise with throw down",
+         "t": "abs",
+         "s": "hip flexors, lower back",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0013",
+         "n": "assisted lying leg raise with throw down",
+         "t": "abs",
+         "s": "hip flexors, quadriceps",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0972",
+         "n": "band bicycle crunch",
+         "t": "abs",
+         "s": "hip flexors, obliques",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1002",
+         "n": "band lying straight leg raise",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0716",
+         "n": "side push neck stretch",
+         "t": "levator scapulae",
+         "s": "trapezius, sternocleidomastoid",
+         "b": "neck",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1403",
+         "n": "neck side stretch",
+         "t": "levator scapulae",
+         "s": "trapezius, sternocleidomastoid",
+         "b": "neck",
+         "sets": 3,
+         "reps": "10"
+        }
+       ],
+       [],
+       [],
+       [],
+       [],
+       []
+      ],
+      "sex": "MALE"
+     },
+     "dur": "",
+     "date": "2026-11-26",
+     "notes": "",
+     "height": "171",
+     "weight": "89",
+     "bodyType": ""
     }
    ],
    "birth": "1971-10-20"
@@ -206,8 +432,8 @@
      "height": "160",
      "weight": "60",
      "bodyType": "Mesomorph (athletic)",
-     "dur": "",
-     "date": "2026-11-17",
+     "dur": 7,
+     "date": "2026-10-25",
      "notes": ""
     }
    ],
@@ -215,7 +441,7 @@
   },
   "s1794902499504": {
    "id": "s1794902499504",
-   "name": "New student",
+   "name": "Pointed student test",
    "sex": "Male",
    "birth": "2014-02-07",
    "blood": "A-",
@@ -654,9 +880,9 @@
       "sex": "MALE"
      },
      "height": "180",
-     "weight": "80",
+     "weight": "78",
      "bodyType": "Mesomorph (athletic)",
-     "dur": "",
+     "dur": 14,
      "date": "2026-11-17",
      "notes": ""
     },
@@ -785,7 +1011,7 @@
       ]
      },
      "height": "180",
-     "weight": "80",
+     "weight": "76",
      "bodyType": "Mesomorph (athletic)",
      "dur": 21,
      "date": "2026-11-17",
@@ -1005,7 +1231,7 @@
       "sex": "MALE"
      },
      "height": "180",
-     "weight": "80",
+     "weight": "75",
      "bodyType": "Mesomorph (athletic)",
      "dur": 60,
      "date": "2026-11-17",
@@ -1195,15 +1421,241 @@
       ]
      },
      "height": "180",
-     "weight": "80",
+     "weight": "74.5",
      "bodyType": "Mesomorph (athletic)",
      "dur": 60,
      "date": "2026-11-17",
      "notes": ""
+    },
+    {
+     "id": "amwxg33zv",
+     "planId": "p1794485967744",
+     "planName": "Aghaye2",
+     "plan": {
+      "id": "amwxg33zv",
+      "name": "Aghaye2",
+      "days": 2,
+      "level": "Beginner",
+      "goal": "Muscle building",
+      "titles": [],
+      "routines": [
+       [
+        {
+         "id": "0003",
+         "n": "air bike",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 2,
+         "reps": "10"
+        },
+        {
+         "id": "1512",
+         "n": "all fours squad stretch",
+         "t": "quads",
+         "s": "hamstrings, glutes",
+         "b": "upper legs",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t1"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 7,
+         "reps": "10",
+         "ss": "gmwkijw0t1"
+        },
+        {
+         "id": "3294",
+         "n": "archer push up",
+         "t": "pectorals",
+         "s": "triceps, shoulders, core",
+         "b": "chest",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t2"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t2"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t3"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10",
+         "ss": "gmwkijw0t3"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0007",
+         "n": "alternate lateral pulldown",
+         "t": "lats",
+         "s": "biceps, rhomboids",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        }
+       ],
+       [
+        {
+         "id": "0003",
+         "n": "air bike",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "3293",
+         "n": "archer pull up",
+         "t": "lats",
+         "s": "biceps, forearms",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "3204",
+         "n": "arms overhead full sit-up (male)",
+         "t": "abs",
+         "s": "hip flexors, lower back",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1314",
+         "n": "back extension on exercise ball",
+         "t": "spine",
+         "s": "glutes, hamstrings",
+         "b": "back",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1473",
+         "n": "backward jump",
+         "t": "quads",
+         "s": "hamstrings, glutes, calves",
+         "b": "upper legs",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0010",
+         "n": "assisted hanging knee raise with throw down",
+         "t": "abs",
+         "s": "hip flexors, lower back",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0013",
+         "n": "assisted lying leg raise with throw down",
+         "t": "abs",
+         "s": "hip flexors, quadriceps",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0972",
+         "n": "band bicycle crunch",
+         "t": "abs",
+         "s": "hip flexors, obliques",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1002",
+         "n": "band lying straight leg raise",
+         "t": "abs",
+         "s": "hip flexors",
+         "b": "waist",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "0716",
+         "n": "side push neck stretch",
+         "t": "levator scapulae",
+         "s": "trapezius, sternocleidomastoid",
+         "b": "neck",
+         "sets": 3,
+         "reps": "10"
+        },
+        {
+         "id": "1403",
+         "n": "neck side stretch",
+         "t": "levator scapulae",
+         "s": "trapezius, sternocleidomastoid",
+         "b": "neck",
+         "sets": 3,
+         "reps": "10"
+        }
+       ],
+       [],
+       [],
+       [],
+       [],
+       []
+      ],
+      "sex": "MALE"
+     },
+     "dur": 7,
+     "date": "2026-11-26",
+     "notes": "",
+     "height": "185",
+     "weight": "73",
+     "bodyType": "Mesomorph (athletic)"
     }
    ],
-   "height": "180",
-   "weight": "80",
+   "height": "185",
+   "weight": "73",
    "bodyType": "Mesomorph (athletic)"
   }
  },
@@ -1282,9 +1734,224 @@
    ],
    "sex": "FEMALE"
   },
+  "p1794485967744": {
+   "id": "p1794485967744",
+   "name": "Aghaye2",
+   "days": 2,
+   "level": "Beginner",
+   "goal": "Muscle building",
+   "titles": [],
+   "routines": [
+    [
+     {
+      "id": "0003",
+      "n": "air bike",
+      "t": "abs",
+      "s": "hip flexors",
+      "b": "waist",
+      "sets": 2,
+      "reps": "10"
+     },
+     {
+      "id": "1512",
+      "n": "all fours squad stretch",
+      "t": "quads",
+      "s": "hamstrings, glutes",
+      "b": "upper legs",
+      "sets": 3,
+      "reps": "10",
+      "ss": "gmwkijw0t1"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 7,
+      "reps": "10",
+      "ss": "gmwkijw0t1"
+     },
+     {
+      "id": "3294",
+      "n": "archer push up",
+      "t": "pectorals",
+      "s": "triceps, shoulders, core",
+      "b": "chest",
+      "sets": 3,
+      "reps": "10",
+      "ss": "gmwkijw0t2"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10",
+      "ss": "gmwkijw0t2"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10",
+      "ss": "gmwkijw0t3"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10",
+      "ss": "gmwkijw0t3"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0007",
+      "n": "alternate lateral pulldown",
+      "t": "lats",
+      "s": "biceps, rhomboids",
+      "b": "back",
+      "sets": 3,
+      "reps": "10"
+     }
+    ],
+    [
+     {
+      "id": "0003",
+      "n": "air bike",
+      "t": "abs",
+      "s": "hip flexors",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "3293",
+      "n": "archer pull up",
+      "t": "lats",
+      "s": "biceps, forearms",
+      "b": "back",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "3204",
+      "n": "arms overhead full sit-up (male)",
+      "t": "abs",
+      "s": "hip flexors, lower back",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "1314",
+      "n": "back extension on exercise ball",
+      "t": "spine",
+      "s": "glutes, hamstrings",
+      "b": "back",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "1473",
+      "n": "backward jump",
+      "t": "quads",
+      "s": "hamstrings, glutes, calves",
+      "b": "upper legs",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0010",
+      "n": "assisted hanging knee raise with throw down",
+      "t": "abs",
+      "s": "hip flexors, lower back",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0013",
+      "n": "assisted lying leg raise with throw down",
+      "t": "abs",
+      "s": "hip flexors, quadriceps",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0972",
+      "n": "band bicycle crunch",
+      "t": "abs",
+      "s": "hip flexors, obliques",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "1002",
+      "n": "band lying straight leg raise",
+      "t": "abs",
+      "s": "hip flexors",
+      "b": "waist",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "0716",
+      "n": "side push neck stretch",
+      "t": "levator scapulae",
+      "s": "trapezius, sternocleidomastoid",
+      "b": "neck",
+      "sets": 3,
+      "reps": "10"
+     },
+     {
+      "id": "1403",
+      "n": "neck side stretch",
+      "t": "levator scapulae",
+      "s": "trapezius, sternocleidomastoid",
+      "b": "neck",
+      "sets": 3,
+      "reps": "10"
+     }
+    ],
+    [],
+    [],
+    [],
+    [],
+    []
+   ],
+   "sex": "MALE"
+  },
   "p1794904139121": {
    "id": "p1794904139121",
-   "name": "man111",
+   "name": "Superset test",
    "days": 3,
    "level": "Beginner",
    "goal": "Muscle building",

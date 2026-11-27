@@ -228,6 +228,44 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.63
+- New favicon: the bearded mascot supplied by the trainer (transparent background, cropped to fill the icon).
+- Default plans (and students) updated from the edited ones: one new default plan and two edited plans added to data/defaults.json.
+
+## v1.62
+- Plan view mode: the day title line above the exercises is removed (the title already shows on the day tab). The list now has a heading row: "Exercise" on the left and "Sets x Reps" on the right.
+
+## v1.61
+- Plan view mode: each exercise is a single line (number, photo, name) with "Sets x Reps" at the far right (e.g. 3 x 10) under one "Sets x Reps" column heading. Long names wrap to 2-3 lines with the same line height.
+- Superset marker keeps the same distance from the coloured bar as in edit mode.
+
+## v1.60
+- Plan view mode: the grey native number spinners next to Sets and Reps are hidden.
+
+## v1.59
+- Plan page: removed the 14px gap between the day tabs and their panel (a more specific margin rule was overriding the tab bar's own margin).
+- Day tabs show the day's name when it has one (no "Day 1:" prefix); otherwise they show "Day N".
+- View mode: Level, Goal, Days and For follow each other from the left instead of being pushed to the right edge.
+
+## v1.58
+- Plan page: a day with no exercises no longer shows the muscles section or the "Add exercises to see which muscles this day works" hint.
+- Plan view mode: Level, Goal, Days and For (men/women) are on one compact line (no blue square around the day count); exercise rows are tighter, with Sets and Reps on one line.
+
+## v1.57
+- Plan page now works like the student page. A new plan starts in edit mode with only a tick (save) and a cross (cancel); it is not saved until it has a name and the tick is pressed.
+- After saving, the plan is shown read-only with edit, duplicate and delete buttons. Edit mode again shows only tick and cross; nothing changes until the tick, and clicking another plan (or New plan) discards unsaved changes.
+- Editing a student's own copy of a program (from the student page) is unchanged.
+
+## v1.56
+- Student view header: the text block is vertically centred, so a two-line student has equal space above and below (same as the students list).
+
+## v1.55
+- Student view header has a fixed height (room for the follow-up line) so every student's first section is the same size; long names are cut with an ellipsis instead of wrapping.
+
+## v1.54
+- Student view header now matches the students list item exactly (same photo, name, age/height/weight line and follow-up line sizes).
+- The details row under it is a single line: Blood type, Body type, BMI.
+
 ## v1.53
 - Student page: the full-width follow-up banner is gone; the follow-up text (same colours) now sits under the student's name without changing the header height.
 - Assessments chart: left axis numbers removed, chart is wider.
