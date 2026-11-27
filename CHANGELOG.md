@@ -228,6 +228,9 @@ date, age and blood type in one row.
 * The Programs section and Assign program stay as before in every mode (Assign program is disabled for a draft that is not saved yet). Saving a student never touches the programs already assigned.
 * Phone width: height and weight now sit side by side with BMI below, so the numbers are readable.
 
+## v1.66
+- Website: defaults.json can now carry a "reset" token. When a browser sees a token it has not applied yet, it deletes all its students and plans once and loads exactly the default students and plans from defaults.json (exercise edits are untouched). Later edits are kept until the next new token.
+
 ## v1.65
 - Exercise pictures are now rounded squares (48 x 48 px, 8 px corners) everywhere instead of circles: the Exercises list, the picker used to add exercises to a plan, and the plan rows. In plan view mode the picture grows from 40 to 48 px.
 
